@@ -4,14 +4,14 @@
         <name>DynaBIMToolbox</name>
     </assembly>
     <members>
-        <member name="M:Solids.Math2.Multiply(System.Int32,System.Int32)">
+        <member name="M:Solids.BooleanAPI.SurfaceSolidAPIIntersectionAreas(System.Collections.Generic.List{Revit.Elements.Wall},System.Collections.Generic.List{Revit.Elements.Wall})">
             <summary>
-            This method multiplies the two input variables
+            Extremely fast RevitAPI intersection between solids and surfaces
             </summary>
-            <param name="xCount"> The x value to be multiplied </param>
-            <param name="yCount"> The x value to be multiplied </param>
-            <returns> x * y </returns>
-            <search> grid, rectangle </search>
+            <param name=""> </param>
+            <param name=""> </param>
+            <returns> List of numbers, representing the area to be deducted from each surface after the intersection </returns>
+            <search> surface, solid, intersection, API </search>
         </member>
     </members>
 </doc>
