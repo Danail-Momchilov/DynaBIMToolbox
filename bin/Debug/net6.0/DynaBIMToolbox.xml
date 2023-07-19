@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DynaBIMToolbox</name>
+    </assembly>
+    <members>
+        <member name="M:Solids.Math2.Multiply(System.Int32,System.Int32)">
+            <summary>
+            This method multiplies the two input variables
+            </summary>
+            <param name="xCount"> The x value to be multiplied </param>
+            <param name="yCount"> The x value to be multiplied </param>
+            <returns> x * y </returns>
+            <search> grid, rectangle </search>
+        </member>
+    </members>
+</doc>

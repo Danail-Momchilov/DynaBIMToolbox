@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "dgSpecHash": "EwPO1VRoRF0eZY29BnmLcrvFGLt8Ts4k0o27kFxzDqHbmixgUXad31xsKBfnaeVJ3ldMRhaNSo4AOhl0dAt+xw==",
+  "success": true,
+  "projectFilePath": "B:\\06. BIM AUTOMATION\\02. C#\\DYNAMO ZERO TOUCH NODES\\DynaBIMToolbox\\DynaBIMToolbox\\DynaBIMToolbox.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Danail.Momchilov\\.nuget\\packages\\dynamovisualprogramming.dynamoservices\\2.18.1.5096\\dynamovisualprogramming.dynamoservices.2.18.1.5096.nupkg.sha512",
+    "C:\\Users\\Danail.Momchilov\\.nuget\\packages\\dynamovisualprogramming.zerotouchlibrary\\2.18.1.5096\\dynamovisualprogramming.zerotouchlibrary.2.18.1.5096.nupkg.sha512"
+  ],
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'DynamoVisualProgramming.ZeroTouchLibrary 2.18.1.5096' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
+      "libraryId": "DynamoVisualProgramming.ZeroTouchLibrary",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
+}

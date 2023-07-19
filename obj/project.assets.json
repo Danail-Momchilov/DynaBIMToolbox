@@ -1,0 +1,148 @@
+{
+  "version": 3,
+  "targets": {
+    "net6.0": {
+      "DynamoVisualProgramming.DynamoServices/2.18.1.5096": {
+        "type": "package",
+        "compile": {
+          "lib/netstandard2.0/DynamoServices.dll": {}
+        },
+        "runtime": {
+          "lib/netstandard2.0/DynamoServices.dll": {}
+        }
+      },
+      "DynamoVisualProgramming.ZeroTouchLibrary/2.18.1.5096": {
+        "type": "package",
+        "dependencies": {
+          "DynamoVisualProgramming.DynamoServices": "2.18.1.5096"
+        },
+        "compile": {
+          "lib/net48/DynamoUnits.dll": {},
+          "lib/net48/ProtoGeometry.dll": {}
+        },
+        "runtime": {
+          "lib/net48/DynamoUnits.dll": {},
+          "lib/net48/ProtoGeometry.dll": {}
+        }
+      }
+    }
+  },
+  "libraries": {
+    "DynamoVisualProgramming.DynamoServices/2.18.1.5096": {
+      "sha512": "isNL3SVqvvzLVgeh+g5/0rdzT+1V8sC1zc9C7BdVpUwLUe6oANRDCpov135KInPKCHRFP8zvIb5UPEkMv0RPfQ==",
+      "type": "package",
+      "path": "dynamovisualprogramming.dynamoservices/2.18.1.5096",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/netstandard2.0/DynamoServices.XML",
+        "content/images/logo.png",
+        "dynamovisualprogramming.dynamoservices.2.18.1.5096.nupkg.sha512",
+        "dynamovisualprogramming.dynamoservices.nuspec",
+        "lib/netstandard2.0/DynamoServices.dll"
+      ]
+    },
+    "DynamoVisualProgramming.ZeroTouchLibrary/2.18.1.5096": {
+      "sha512": "JP5hrXKypN7OskKHQO8sChV2KvyQPUjLvpQZXhpFus1DMRamNbYf5oGi0s1qBZPWRVA3oOnd5hpcWRP0btXe1A==",
+      "type": "package",
+      "path": "dynamovisualprogramming.zerotouchlibrary/2.18.1.5096",
+      "files": [
+        ".nupkg.metadata",
+        ".signature.p7s",
+        "build/net48/ProtoGeometry.XML",
+        "content/images/logo.png",
+        "dynamovisualprogramming.zerotouchlibrary.2.18.1.5096.nupkg.sha512",
+        "dynamovisualprogramming.zerotouchlibrary.nuspec",
+        "lib/net48/DynamoUnits.dll",
+        "lib/net48/ProtoGeometry.dll"
+      ]
+    }
+  },
+  "projectFileDependencyGroups": {
+    "net6.0": [
+      "DynamoVisualProgramming.ZeroTouchLibrary >= 2.18.1.5096"
+    ]
+  },
+  "packageFolders": {
+    "C:\\Users\\Danail.Momchilov\\.nuget\\packages\\": {},
+    "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages": {}
+  },
+  "project": {
+    "version": "1.0.0",
+    "restore": {
+      "projectUniqueName": "B:\\06. BIM AUTOMATION\\02. C#\\DYNAMO ZERO TOUCH NODES\\DynaBIMToolbox\\DynaBIMToolbox\\DynaBIMToolbox.csproj",
+      "projectName": "DynaBIMToolbox",
+      "projectPath": "B:\\06. BIM AUTOMATION\\02. C#\\DYNAMO ZERO TOUCH NODES\\DynaBIMToolbox\\DynaBIMToolbox\\DynaBIMToolbox.csproj",
+      "packagesPath": "C:\\Users\\Danail.Momchilov\\.nuget\\packages\\",
+      "outputPath": "B:\\06. BIM AUTOMATION\\02. C#\\DYNAMO ZERO TOUCH NODES\\DynaBIMToolbox\\DynaBIMToolbox\\obj\\",
+      "projectStyle": "PackageReference",
+      "fallbackFolders": [
+        "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+      ],
+      "configFilePaths": [
+        "C:\\Users\\Danail.Momchilov\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+        "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+      ],
+      "originalTargetFrameworks": [
+        "net6.0"
+      ],
+      "sources": {
+        "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+        "C:\\Program Files\\dotnet\\library-packs": {},
+        "https://api.nuget.org/v3/index.json": {}
+      },
+      "frameworks": {
+        "net6.0": {
+          "targetAlias": "net6.0",
+          "projectReferences": {}
+        }
+      },
+      "warningProperties": {
+        "warnAsError": [
+          "NU1605"
+        ]
+      }
+    },
+    "frameworks": {
+      "net6.0": {
+        "targetAlias": "net6.0",
+        "dependencies": {
+          "DynamoVisualProgramming.ZeroTouchLibrary": {
+            "target": "Package",
+            "version": "[2.18.1.5096, )"
+          }
+        },
+        "imports": [
+          "net461",
+          "net462",
+          "net47",
+          "net471",
+          "net472",
+          "net48",
+          "net481"
+        ],
+        "assetTargetFallback": true,
+        "warn": true,
+        "frameworkReferences": {
+          "Microsoft.NETCore.App": {
+            "privateAssets": "all"
+          }
+        },
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
+      }
+    }
+  },
+  "logs": [
+    {
+      "code": "NU1701",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Package 'DynamoVisualProgramming.ZeroTouchLibrary 2.18.1.5096' was restored using '.NETFramework,Version=v4.6.1, .NETFramework,Version=v4.6.2, .NETFramework,Version=v4.7, .NETFramework,Version=v4.7.1, .NETFramework,Version=v4.7.2, .NETFramework,Version=v4.8, .NETFramework,Version=v4.8.1' instead of the project target framework 'net6.0'. This package may not be fully compatible with your project.",
+      "libraryId": "DynamoVisualProgramming.ZeroTouchLibrary",
+      "targetGraphs": [
+        "net6.0"
+      ]
+    }
+  ]
+}

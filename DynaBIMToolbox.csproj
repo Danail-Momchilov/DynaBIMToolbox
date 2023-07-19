@@ -1,0 +1,29 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DynamoVisualProgramming.ZeroTouchLibrary" Version="2.18.1.5096" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="RevitAPI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2021\RevitAPI.dll</HintPath>
+    </Reference>
+    <Reference Include="RevitAPIUI">
+      <HintPath>C:\Program Files\Autodesk\Revit 2021\RevitAPIUI.dll</HintPath>
+    </Reference>
+    <Reference Include="RevitNodes">
+      <HintPath>C:\Program Files\Autodesk\Revit 2021\AddIns\DynamoForRevit\Revit\RevitNodes.dll</HintPath>
+    </Reference>
+    <Reference Include="RevitServices">
+      <HintPath>C:\Program Files\Autodesk\Revit 2021\AddIns\DynamoForRevit\Revit\RevitServices.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
