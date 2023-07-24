@@ -4,14 +4,49 @@
         <name>DynaBIMToolbox</name>
     </assembly>
     <members>
-        <member name="M:Solids.BooleanAPI.SurfaceSolidAPIIntersectionAreas(System.Collections.Generic.List{Revit.Elements.Wall},System.Collections.Generic.List{Revit.Elements.Wall})">
+        <member name="M:Solids.SolidsAPI.GetWallSolid(Revit.Elements.Wall)">
             <summary>
-            Extremely fast RevitAPI intersection between solids and surfaces
+            Get the Autodesk.DB.Solid for the specified wall
             </summary>
-            <param name=""> </param>
-            <param name=""> </param>
-            <returns> List of numbers, representing the area to be deducted from each surface after the intersection </returns>
-            <search> surface, solid, intersection, API </search>
+            <param name="hostModelWall"> Wall instance </param>
+            <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
+            <search> wall, solid, API </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.GetWallSolidTransformed(Revit.Elements.Wall,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Get the Autodesk.DB.Solid for the specified wall from linked model
+            </summary>
+            <param name="linkModelWall"> Wall || A wall instance from linked model </param>
+            <param name="linkInstance"> Wall || A wall instance from linked model </param>
+            <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
+            <search> wall, solid, API </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.ReturnDynamoSolid(Autodesk.Revit.DB.Solid)">
+            <summary>
+            Wrap Revit Autodesk.Revit.DB.Solid to get Dynamo solid
+            </summary>
+            <param name="solid"> Solid || Autodesk.Revit.DB.Solid </param>
+            <returns> Autodesk.DesignScript.Geometry || Dynamo Solid </returns>
+            <search> solid, API, Dynamo </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.RevitAPIExtrusion(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double)">
+            <summary>
+            Create Autodesk.Revit.DB.Solid, based on a given list of points and height
+            </summary>
+            <param name="points"> [points] || A list of dynamo points. Note: Points should be exactly four and they should be in the correct order, otherwise the node will return 'null' </param>
+            <param name="height"> height || The specified height of the Solid </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, Dynamo </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.RevitAPIExtrusionTransform(System.Collections.Generic.List{Autodesk.DesignScript.Geometry.Point},System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Create Autodesk.Revit.DB.Solid and transform its geometry, based on a given list of points, height and a linkInstance to get its Transform
+            </summary>
+            <param name="points"> [points] || A list of dynamo points. Note: Points should be exactly four and they should be in the correct order, otherwise the node will return 'null' </param>
+            <param name="height"> height || The specified height of the Solid </param>
+            <param name="linkInstance"> Link Instance </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, Dynamo </search>
         </member>
     </members>
 </doc>

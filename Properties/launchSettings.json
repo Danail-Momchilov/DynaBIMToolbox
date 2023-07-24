@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "RevitLauncher": {
+      "commandName": "Executable",
+      "executablePath": "C:\\Program Files\\Autodesk\\Revit 2021\\Revit.exe",
+      "nativeDebugging": true
+    }
+  }
+}
