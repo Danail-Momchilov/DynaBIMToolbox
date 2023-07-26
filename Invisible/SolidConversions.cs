@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Autodesk.DesignScript.Runtime;
 using Autodesk.Revit.DB;
+using Revit.GeometryConversion;
+using System;
 
 namespace DynaBIMToolbox.Invisible
 {
@@ -93,23 +95,49 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
+        // potential issues - Revise!
         public static Autodesk.Revit.DB.Solid CreateSolidExtrusion(List<Autodesk.DesignScript.Geometry.Point> points, double height)
         {
-            XYZ point0 = new XYZ(points[0].X / 30.48, points[0].Y / 30.48, points[0].Z / 30.48);
-            XYZ point1 = new XYZ(points[1].X / 30.48, points[1].Y / 30.48, points[1].Z / 30.48);
-            XYZ point2 = new XYZ(points[2].X / 30.48, points[2].Y / 30.48, points[2].Z / 30.48);
-            XYZ point3 = new XYZ(points[3].X / 30.48, points[3].Y / 30.48, points[3].Z / 30.48);
+            try
+            {
+                XYZ point0 = new XYZ(points[0].X / 30.48, points[0].Y / 30.48, points[0].Z / 30.48);
+                XYZ point1 = new XYZ(points[1].X / 30.48, points[1].Y / 30.48, points[1].Z / 30.48);
+                XYZ point2 = new XYZ(points[2].X / 30.48, points[2].Y / 30.48, points[2].Z / 30.48);
+                XYZ point3 = new XYZ(points[3].X / 30.48, points[3].Y / 30.48, points[3].Z / 30.48);
 
-            Autodesk.Revit.DB.Curve edge0 = Autodesk.Revit.DB.Line.CreateUnbound(point0, point1);
-            Autodesk.Revit.DB.Curve edge1 = Autodesk.Revit.DB.Line.CreateUnbound(point1, point2);
-            Autodesk.Revit.DB.Curve edge2 = Autodesk.Revit.DB.Line.CreateUnbound(point2, point3);
-            Autodesk.Revit.DB.Curve edge3 = Autodesk.Revit.DB.Line.CreateUnbound(point3, point0);
+                Autodesk.Revit.DB.Curve edge0 = Autodesk.Revit.DB.Line.CreateUnbound(point0, point1);
+                Autodesk.Revit.DB.Curve edge1 = Autodesk.Revit.DB.Line.CreateUnbound(point1, point2);
+                Autodesk.Revit.DB.Curve edge2 = Autodesk.Revit.DB.Line.CreateUnbound(point2, point3);
+                Autodesk.Revit.DB.Curve edge3 = Autodesk.Revit.DB.Line.CreateUnbound(point3, point0);
 
-            List<Autodesk.Revit.DB.Curve> edges = new List<Autodesk.Revit.DB.Curve> { edge0, edge1, edge2, edge3 };
-            CurveLoop crvLoop = CurveLoop.Create(edges);
-            List<CurveLoop> crvLoopList = new List<CurveLoop> { crvLoop };
+                List<Autodesk.Revit.DB.Curve> edges = new List<Autodesk.Revit.DB.Curve> { edge0, edge1, edge2, edge3 };
+                CurveLoop crvLoop = CurveLoop.Create(edges);
+                List<CurveLoop> crvLoopList = new List<CurveLoop> { crvLoop };
 
-            return GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, height);
+                return GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, height);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        // potential issues - Revise!
+
+        public static Autodesk.Revit.DB.Solid CreateSolidExtrusionFromCurve(Autodesk.DesignScript.Geometry.Curve line, double width, double height)
+        {
+            try
+            {
+                Autodesk.Revit.DB.Curve revitCurve = line.ToRevitType();
+
+                XYZ verticalNormal = new XYZ(0, 0, 1);
+
+                List<CurveLoop> crvLoop = new List<CurveLoop> { CurveLoop.CreateViaThicken(revitCurve, width/30.48, verticalNormal) };
+                return GeometryCreationUtilities.CreateExtrusionGeometry(crvLoop, XYZ.BasisZ, height/30.48);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }

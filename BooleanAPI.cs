@@ -14,6 +14,8 @@ using RevitServices.Persistence;
 using System.Xml.Linq;
 using Revit.GeometryConversion;
 using DynaBIMToolbox.Invisible;
+using System.Linq.Expressions;
+using System;
 
 
 // TO DO! Research NodeModel nodes with custom UI
@@ -93,22 +95,18 @@ namespace Solids
         }
 
         /// <summary>
-        /// Create Autodesk.Revit.DB.Solid, based on a given list of points and height
+        /// Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop and extruding it
         /// </summary>
-        /// <param name="points"> [points] || A list of dynamo points. Note: Points should be exactly four and they should be in the correct order, otherwise the node will return 'null' </param>
-        /// <param name="height"> height || The specified height of the Solid </param>
+        /// <param name="line"> [points] || A straight Dynamo line </param>
+        /// <param name="width"> height || A specified width for the offset </param>
+        /// <param name="height"> Height for the extrusion </param>
         /// <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
         /// <search> solid, API, Dynamo </search>
-        public static Autodesk.Revit.DB.Solid RevitAPIExtrusion(List<Autodesk.DesignScript.Geometry.Point> points, double height)
+        public static Autodesk.Revit.DB.Solid RevitAPIExtrusionFromCurve(Autodesk.DesignScript.Geometry.Curve line, double width, double height)
         {
             try
             {
-                if (points.Count != 4)
-                    return null;
-                else
-                {
-                    return SolidConversions.CreateSolidExtrusion(points, height);
-                }
+                return SolidConversions.CreateSolidExtrusionFromCurve(line, width, height);
             }
             catch (Exception e)
             {
@@ -117,23 +115,41 @@ namespace Solids
         }
 
         /// <summary>
-        /// Create Autodesk.Revit.DB.Solid and transform its geometry, based on a given list of points, height and a linkInstance to get its Transform
+        /// Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop, extruding and transforming its coordinate system
         /// </summary>
-        /// <param name="points"> [points] || A list of dynamo points. Note: Points should be exactly four and they should be in the correct order, otherwise the node will return 'null' </param>
-        /// <param name="height"> height || The specified height of the Solid </param>
-        /// <param name="linkInstance"> Link Instance </param>
+        /// <param name="line"> [points] || A straight Dynamo line </param>
+        /// <param name="width"> height || A specified width for the offset </param>
+        /// <param name="height"> Height for the extrusion </param>
+        /// <param name="linkInstance"> Height for the extrusion </param>
         /// <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
         /// <search> solid, API, Dynamo </search>
-        public static Autodesk.Revit.DB.Solid RevitAPIExtrusionTransform(List<Autodesk.DesignScript.Geometry.Point> points, double height, RevitLinkInstance linkInstance)
+        public static Autodesk.Revit.DB.Solid RevitAPIExtrusionFromCurveTransformed(Autodesk.DesignScript.Geometry.Curve line, double width, double height, RevitLinkInstance linkInstance)
         {
             try
             {
-                if (points.Count != 4)
-                    return null;
-                else
-                {
-                    return SolidConversions.ReturnTransformedSolid(SolidConversions.CreateSolidExtrusion(points, height), linkInstance);
-                }
+                return SolidConversions.ReturnTransformedSolid(SolidConversions.CreateSolidExtrusionFromCurve(line, width, height), linkInstance);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance
+        /// </summary>
+        /// <param name="solid"> [points] || A straight Dynamo line </param>
+        /// <param name="translation"> height || A specified width for the offset </param>
+        /// <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+        /// <search> solid, API, Dynamo, translate, vertical </search>
+        public static Autodesk.Revit.DB.Solid TranslateSolidVertically(Autodesk.Revit.DB.Solid solid, double translation)
+        {
+            try
+            {
+                XYZ translationVector = new XYZ(0, 0, translation / 30.48);
+                Transform translationTransform = Transform.CreateTranslation(translationVector);
+
+                return SolidUtils.CreateTransformed(solid, translationTransform);
             }
             catch (Exception e)
             {
