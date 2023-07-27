@@ -43,7 +43,7 @@ namespace Solids
             {
                 List<Revit.Elements.Wall> wallList = new List<Revit.Elements.Wall> { hostModelWall };
                 // get solids of host model walls
-                List<Autodesk.Revit.DB.Solid> hostedWallsSolids = SolidConversions.ReturnSolids(wallList);
+                List<Autodesk.Revit.DB.Solid> hostedWallsSolids = SolidConversions.ReturnWallsSolids(wallList);
 
                 return hostedWallsSolids[0];
             }
@@ -57,7 +57,7 @@ namespace Solids
         /// Get the Autodesk.DB.Solid for the specified wall from linked model
         /// </summary>
         /// <param name="linkModelWall"> Wall || A wall instance from linked model </param>
-        /// <param name="linkInstance"> Wall || A wall instance from linked model </param>
+        /// <param name="linkInstance"> LinkInstance || Revit Link Instance </param>
         /// <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
         /// <search> wall, solid, API </search>
         public static Autodesk.Revit.DB.Solid GetWallSolidTransformed(Revit.Elements.Wall linkModelWall, RevitLinkInstance linkInstance)
@@ -66,9 +66,52 @@ namespace Solids
             {
                 List<Revit.Elements.Wall> wallList = new List<Revit.Elements.Wall> { linkModelWall };
                 // get solids of host model walls
-                List<Autodesk.Revit.DB.Solid> hostedWallsSolids = SolidConversions.ReturnSolids(wallList);
+                List<Autodesk.Revit.DB.Solid> hostedWallsSolids = SolidConversions.ReturnWallsSolids(wallList);
 
                 return SolidConversions.ReturnTransformedSolid(hostedWallsSolids[0], linkInstance);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Get all the solids of an Element, unite them and return the united solid. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+        /// </summary>
+        /// <param name="element"> Element || Revit.Elements.Element </param>
+        /// <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
+        /// <search> element, solid, API </search>
+        public static Autodesk.Revit.DB.Solid GetAndUniteElementSolids(Revit.Elements.Element element)
+        {
+            try
+            {
+                List<Revit.Elements.Element> elemList = new List<Revit.Elements.Element> { element };
+                List<Autodesk.Revit.DB.Solid> elemSolids = SolidConversions.ReturnElementsSolids(elemList);
+
+                return SolidConversions.UniteSolids(elemSolids);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+        /// </summary>
+        /// <param name="element"> Element || Revit.Elements.Element </param>
+        /// <param name="linkInstance"> LinkInstance || Revit Link Instance </param>
+        /// <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
+        /// <search> element, solid, API </search>
+        public static Autodesk.Revit.DB.Solid GetAndUniteElementSolidsTransformed(Revit.Elements.Element element, RevitLinkInstance linkInstance)
+        {
+            try
+            {
+                List<Revit.Elements.Element> elemList = new List<Revit.Elements.Element> { element };
+                List<Autodesk.Revit.DB.Solid> elemSolids = SolidConversions.ReturnElementsSolids(elemList);
+
+                return SolidConversions.ReturnTransformedSolid(SolidConversions.UniteSolids(elemSolids), linkInstance);
             }
             catch (Exception e)
             {

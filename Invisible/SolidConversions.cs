@@ -4,6 +4,7 @@ using Autodesk.DesignScript.Runtime;
 using Autodesk.Revit.DB;
 using Revit.GeometryConversion;
 using System;
+using System.Security.Cryptography;
 
 namespace DynaBIMToolbox.Invisible
 {
@@ -13,7 +14,7 @@ namespace DynaBIMToolbox.Invisible
     {
         public SolidConversions() { }
 
-        public static List<Autodesk.Revit.DB.Solid> ReturnSolids(List<Revit.Elements.Wall> hostModelWalls)
+        public static List<Autodesk.Revit.DB.Solid> ReturnWallsSolids(List<Revit.Elements.Wall> hostModelWalls)
         {
             try
             {
@@ -63,7 +64,58 @@ namespace DynaBIMToolbox.Invisible
                 throw e;
             }
         }
-        
+
+        public static List<Autodesk.Revit.DB.Solid> ReturnElementsSolids(List<Revit.Elements.Element> elements)
+        {
+            try
+            {
+                Options options = new Options();
+                List<Autodesk.Revit.DB.Solid> elementsSolids = new List<Autodesk.Revit.DB.Solid>();
+
+                foreach (Revit.Elements.Element element in elements)
+                {
+                    Element revitElement = element.InternalElement;
+
+                    foreach (GeometryObject geoEle in revitElement.get_Geometry(options))
+                    {
+                        if (geoEle is GeometryInstance)
+                        {
+                            GeometryInstance geoInst = geoEle as GeometryInstance;
+                            GeometryElement geoSet = geoInst.GetInstanceGeometry();
+
+                            foreach (GeometryObject geoObj in geoSet)
+                            {
+                                if (geoObj is Autodesk.Revit.DB.Solid)
+                                {
+                                    Autodesk.Revit.DB.Solid geoSolid = geoObj as Autodesk.Revit.DB.Solid;
+
+                                    if (geoSolid.Volume > 0)
+                                    {
+                                        elementsSolids.Add(geoSolid);
+                                    }
+                                }
+                            }
+                        }
+                        else if (geoEle is Autodesk.Revit.DB.Solid)
+                        {
+                            Autodesk.Revit.DB.Solid geoSolid = geoEle as Autodesk.Revit.DB.Solid;
+
+                            if (geoSolid.Volume > 0)
+                            {
+                                elementsSolids.Add(geoSolid);
+                            }
+                        }
+                    }
+                }
+
+                return elementsSolids;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public static Autodesk.Revit.DB.Solid ReturnTransformedSolid(Autodesk.Revit.DB.Solid solid, RevitLinkInstance linkInstance)
         {
             try
@@ -133,6 +185,54 @@ namespace DynaBIMToolbox.Invisible
 
                 List<CurveLoop> crvLoop = new List<CurveLoop> { CurveLoop.CreateViaThicken(revitCurve, width/30.48, verticalNormal) };
                 return GeometryCreationUtilities.CreateExtrusionGeometry(crvLoop, XYZ.BasisZ, height/30.48);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static Autodesk.Revit.DB.Solid UniteSolids(List<Autodesk.Revit.DB.Solid> solids)
+        {
+            try
+            {
+                if (solids == null)
+                {
+                    throw new ArgumentException("At least two solids are required for the boolean operation");
+                }
+                else
+                {
+                    Autodesk.Revit.DB.Solid baseSolid = solids[0];
+                    List<Autodesk.Revit.DB.Solid> remainingSolids = new List<Autodesk.Revit.DB.Solid>();
+
+                    foreach (Autodesk.Revit.DB.Solid solid in solids)
+                        try
+                        {
+                            baseSolid = BooleanOperationsUtils.ExecuteBooleanOperation(baseSolid, solid, BooleanOperationsType.Union);
+                        }
+                        catch
+                        {
+                            remainingSolids.Add(solid);
+                        }
+                    
+                    if (remainingSolids.Count > 0)
+                    {
+                        Autodesk.Revit.DB.Solid errorSolid = remainingSolids[0];
+                        foreach (Autodesk.Revit.DB.Solid solid in remainingSolids)
+                            try
+                            {
+                                errorSolid = BooleanOperationsUtils.ExecuteBooleanOperation(errorSolid, solid, BooleanOperationsType.Union);
+                            }
+                            catch { }
+                        try
+                        {
+                            baseSolid = BooleanOperationsUtils.ExecuteBooleanOperation(baseSolid, errorSolid, BooleanOperationsType.Union);
+                        }
+                        catch { }
+                    }
+
+                    return baseSolid;
+                }
             }
             catch (Exception e)
             {

@@ -17,9 +17,26 @@
             Get the Autodesk.DB.Solid for the specified wall from linked model
             </summary>
             <param name="linkModelWall"> Wall || A wall instance from linked model </param>
-            <param name="linkInstance"> Wall || A wall instance from linked model </param>
+            <param name="linkInstance"> LinkInstance || Revit Link Instance </param>
             <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
             <search> wall, solid, API </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.GetAndUniteElementSolids(Revit.Elements.Element)">
+            <summary>
+            Get all the solids of an Element, unite them and return the united solid. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+            </summary>
+            <param name="element"> Element || Revit.Elements.Element </param>
+            <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
+            <search> element, solid, API </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.GetAndUniteElementSolidsTransformed(Revit.Elements.Element,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+            </summary>
+            <param name="element"> Element || Revit.Elements.Element </param>
+            <param name="linkInstance"> LinkInstance || Revit Link Instance </param>
+            <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
+            <search> element, solid, API </search>
         </member>
         <member name="M:Solids.SolidsAPI.ReturnDynamoSolid(Autodesk.Revit.DB.Solid)">
             <summary>
