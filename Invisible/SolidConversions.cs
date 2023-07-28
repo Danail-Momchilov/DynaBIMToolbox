@@ -204,6 +204,7 @@ namespace DynaBIMToolbox.Invisible
                 {
                     Autodesk.Revit.DB.Solid baseSolid = solids[0];
                     List<Autodesk.Revit.DB.Solid> remainingSolids = new List<Autodesk.Revit.DB.Solid>();
+                    List<Autodesk.Revit.DB.Solid> leftSolids = new List<Autodesk.Revit.DB.Solid>();
 
                     foreach (Autodesk.Revit.DB.Solid solid in solids)
                         try
@@ -217,18 +218,12 @@ namespace DynaBIMToolbox.Invisible
                     
                     if (remainingSolids.Count > 0)
                     {
-                        Autodesk.Revit.DB.Solid errorSolid = remainingSolids[0];
                         foreach (Autodesk.Revit.DB.Solid solid in remainingSolids)
                             try
                             {
-                                errorSolid = BooleanOperationsUtils.ExecuteBooleanOperation(errorSolid, solid, BooleanOperationsType.Union);
+                                baseSolid = BooleanOperationsUtils.ExecuteBooleanOperation(baseSolid, solid, BooleanOperationsType.Union);
                             }
-                            catch { }
-                        try
-                        {
-                            baseSolid = BooleanOperationsUtils.ExecuteBooleanOperation(baseSolid, errorSolid, BooleanOperationsType.Union);
-                        }
-                        catch { }
+                            catch { leftSolids.Add(solid); }
                     }
 
                     return baseSolid;
@@ -239,5 +234,73 @@ namespace DynaBIMToolbox.Invisible
                 throw e;
             }
         }
+
+        public static List<Autodesk.Revit.DB.Solid> RotateSolidsAroundPoint(List<Autodesk.Revit.DB.Solid> solids, Autodesk.DesignScript.Geometry.Point rotationCenter, double angleDegree)
+        {
+            try
+            {
+                if (solids == null || solids.Count == 0)
+                {
+                    throw new ArgumentException("The list of solids is empty.");
+                }
+
+                XYZ centerPoint = new XYZ(rotationCenter.X, rotationCenter.Y, rotationCenter.Z);
+
+                double angleRadians = angleDegree * (Math.PI / 180);
+
+                Transform rotationTransform = Transform.CreateRotationAtPoint(XYZ.BasisZ, angleRadians, centerPoint);
+
+                List<Autodesk.Revit.DB.Solid> rotatedSolids = new List<Autodesk.Revit.DB.Solid>();
+
+                foreach (Autodesk.Revit.DB.Solid solid in solids)
+                {
+                    Autodesk.Revit.DB.Solid rotatedSolid = SolidUtils.CreateTransformed(solid, rotationTransform);
+                    rotatedSolids.Add(rotatedSolid);
+                }
+
+                return rotatedSolids;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static BoundingBoxXYZ BoundingBoxFromMultipleSolids(List<Autodesk.Revit.DB.Solid> solids)
+        {
+            try
+            {
+                if (solids == null || solids.Count == 0)
+                {
+                    throw new ArgumentException("The list of solids is empty.");
+                }
+
+                XYZ minPt = solids[0].GetBoundingBox().Min;
+                XYZ maxPt = solids[0].GetBoundingBox().Max;
+
+                if (solids.Count != 1)
+                {
+                    foreach (Autodesk.Revit.DB.Solid solid in solids)
+                    {
+                        BoundingBoxXYZ bBox = solid.GetBoundingBox();
+
+                        minPt = PointConversions.GetMinimumPoint(minPt, bBox.Min);
+                        maxPt = PointConversions.GetMaximumPoint(maxPt, bBox.Max);
+                    }
+                }
+
+                BoundingBoxXYZ finalBbox = new BoundingBoxXYZ();
+                finalBbox.Min = minPt;
+                finalBbox.Max = maxPt;
+
+                return finalBbox;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+
     }
 }

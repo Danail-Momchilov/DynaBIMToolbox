@@ -23,7 +23,7 @@
         </member>
         <member name="M:Solids.SolidsAPI.GetAndUniteElementSolids(Revit.Elements.Element)">
             <summary>
-            Get all the solids of an Element, unite them and return the united solid. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+            Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
             </summary>
             <param name="element"> Element || Revit.Elements.Element </param>
             <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>

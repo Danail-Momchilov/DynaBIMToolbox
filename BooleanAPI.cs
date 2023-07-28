@@ -77,7 +77,7 @@ namespace Solids
         }
 
         /// <summary>
-        /// Get all the solids of an Element, unite them and return the united solid. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+        /// Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
         /// </summary>
         /// <param name="element"> Element || Revit.Elements.Element </param>
         /// <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
@@ -193,6 +193,30 @@ namespace Solids
                 Transform translationTransform = Transform.CreateTranslation(translationVector);
 
                 return SolidUtils.CreateTransformed(solid, translationTransform);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static Autodesk.Revit.DB.Solid ElementOrientedBboxSolid(Revit.Elements.Element element, Autodesk.DesignScript.Geometry.Point point, double degAngle)
+        {
+            try
+            {
+                // get all solids of the element
+                List<Revit.Elements.Element> elements = new List<Revit.Elements.Element> { element };
+                List<Autodesk.Revit.DB.Solid> elemSolids = SolidConversions.ReturnElementsSolids(elements);
+
+                // rotate all the solids to get the oriented with Project North
+                List<Autodesk.Revit.DB.Solid> rotatedSolids = SolidConversions.RotateSolidsAroundPoint(elemSolids, point, degAngle);
+
+                // get boundingbox around the group of solids
+                BoundingBoxXYZ rotatedBbox = SolidConversions.BoundingBoxFromMultipleSolids(rotatedSolids);
+
+                // create solid from bounding box element
+
+
             }
             catch (Exception e)
             {
