@@ -301,6 +301,30 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
+        public static Autodesk.Revit.DB.Solid BoundingBoxToSolid(BoundingBoxXYZ bbox)
+        {
+            XYZ minPt = bbox.Min;
+            XYZ maxPt = bbox.Max;
 
+            XYZ pt0 = minPt;
+            XYZ pt1 = new XYZ(maxPt.X/30.48, minPt.Y/30.48, minPt.Z/30.48);
+            XYZ pt2 = new XYZ(maxPt.X/30.48, maxPt.Y/30.48, minPt.Z/30.48);
+            XYZ pt3 = new XYZ(minPt.X/30.48, maxPt.Y/30.48, minPt.Z/30.48);
+
+            double height = maxPt.Z / 30.48 - minPt.Z / 30.48;
+
+            List<Autodesk.Revit.DB.Curve> edges = new List<Autodesk.Revit.DB.Curve>();
+
+            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt0, pt1));
+            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt1, pt2));
+            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt2, pt3));
+            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt3, pt0));
+
+            CurveLoop crvLoop = CurveLoop.Create(edges);
+
+            List<CurveLoop> loopList = new List<CurveLoop> { crvLoop };
+
+            return GeometryCreationUtilities.CreateExtrusionGeometry(loopList, XYZ.BasisZ, height);
+        }
     }
 }

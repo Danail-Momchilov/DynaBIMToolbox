@@ -215,7 +215,10 @@ namespace Solids
                 BoundingBoxXYZ rotatedBbox = SolidConversions.BoundingBoxFromMultipleSolids(rotatedSolids);
 
                 // create solid from bounding box element
+                List<Autodesk.Revit.DB.Solid> bboxSolid = new List<Autodesk.Revit.DB.Solid> { SolidConversions.BoundingBoxToSolid(rotatedBbox) };
 
+                // rotate the solid back to its original angle and return
+                return SolidConversions.RotateSolidsAroundPoint(bboxSolid, point, -degAngle)[0];
 
             }
             catch (Exception e)
