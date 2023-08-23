@@ -235,6 +235,7 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
+        /*
         public static List<Autodesk.Revit.DB.Solid> RotateSolidsAroundPoint(List<Autodesk.Revit.DB.Solid> solids, Autodesk.DesignScript.Geometry.Point rotationCenter, double angleDegree)
         {
             try
@@ -244,7 +245,7 @@ namespace DynaBIMToolbox.Invisible
                     throw new ArgumentException("The list of solids is empty.");
                 }
 
-                XYZ centerPoint = new XYZ(rotationCenter.X, rotationCenter.Y, rotationCenter.Z);
+                XYZ centerPoint = new XYZ(rotationCenter.X / 30.48, rotationCenter.Y / 30.48, rotationCenter.Z / 30.48);
 
                 double angleRadians = angleDegree * (Math.PI / 180);
 
@@ -266,6 +267,7 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
+        
         public static BoundingBoxXYZ BoundingBoxFromMultipleSolids(List<Autodesk.Revit.DB.Solid> solids)
         {
             try
@@ -299,32 +301,52 @@ namespace DynaBIMToolbox.Invisible
             {
                 throw e;
             }
-        }
+        }*/
 
         public static Autodesk.Revit.DB.Solid BoundingBoxToSolid(BoundingBoxXYZ bbox)
         {
             XYZ minPt = bbox.Min;
             XYZ maxPt = bbox.Max;
-
+            
             XYZ pt0 = minPt;
-            XYZ pt1 = new XYZ(maxPt.X/30.48, minPt.Y/30.48, minPt.Z/30.48);
-            XYZ pt2 = new XYZ(maxPt.X/30.48, maxPt.Y/30.48, minPt.Z/30.48);
-            XYZ pt3 = new XYZ(minPt.X/30.48, maxPt.Y/30.48, minPt.Z/30.48);
+            XYZ pt1 = new XYZ(maxPt.X, minPt.Y, minPt.Z);
+            XYZ pt2 = new XYZ(maxPt.X, maxPt.Y, minPt.Z);
+            XYZ pt3 = new XYZ(minPt.X, maxPt.Y, minPt.Z);
 
-            double height = maxPt.Z / 30.48 - minPt.Z / 30.48;
+            double height = maxPt.Z - minPt.Z;
 
             List<Autodesk.Revit.DB.Curve> edges = new List<Autodesk.Revit.DB.Curve>();
 
-            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt0, pt1));
-            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt1, pt2));
-            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt2, pt3));
-            edges.Add(Autodesk.Revit.DB.Line.CreateUnbound(pt3, pt0));
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt0, pt1));
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt1, pt2));
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt2, pt3));
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt3, pt0));
 
             CurveLoop crvLoop = CurveLoop.Create(edges);
 
             List<CurveLoop> loopList = new List<CurveLoop> { crvLoop };
 
             return GeometryCreationUtilities.CreateExtrusionGeometry(loopList, XYZ.BasisZ, height);
+        }
+
+        public static List<Autodesk.DesignScript.Geometry.Curve> BoundingBoxToCurves(BoundingBoxXYZ bbox)
+        {
+            XYZ minPt = bbox.Min;
+            XYZ maxPt = bbox.Max;
+
+            XYZ pt0 = minPt;
+            XYZ pt1 = new XYZ(maxPt.X, minPt.Y, minPt.Z);
+            XYZ pt2 = new XYZ(maxPt.X, maxPt.Y, minPt.Z);
+            XYZ pt3 = new XYZ(minPt.X, maxPt.Y, minPt.Z);
+
+            List<Autodesk.DesignScript.Geometry.Curve> edges = new List<Autodesk.DesignScript.Geometry.Curve>();
+
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt0, pt1).ToProtoType());
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt1, pt2).ToProtoType());
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt2, pt3).ToProtoType());
+            edges.Add(Autodesk.Revit.DB.Line.CreateBound(pt3, pt0).ToProtoType());
+
+            return edges;
         }
     }
 }

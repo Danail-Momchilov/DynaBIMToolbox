@@ -60,10 +60,10 @@
             <summary>
             Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop, extruding and transforming its coordinate system
             </summary>
-            <param name="line"> [points] || A straight Dynamo line </param>
-            <param name="width"> height || A specified width for the offset </param>
-            <param name="height"> Height for the extrusion </param>
-            <param name="linkInstance"> Height for the extrusion </param>
+            <param name="line"> Line || A straight Dynamo line </param>
+            <param name="width"> Double || A specified width for the offset </param>
+            <param name="height"> Double || Height for the extrusion </param>
+            <param name="linkInstance"> Revit Link Instance </param>
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, Dynamo </search>
         </member>
@@ -71,10 +71,31 @@
             <summary>
             Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance
             </summary>
-            <param name="solid"> [points] || A straight Dynamo line </param>
-            <param name="translation"> height || A specified width for the offset </param>
+            <param name="solid"> Solid || Autodesk.Revit.DB.Solid </param>
+            <param name="translation"> Number || A specified distance for vertical translation </param>
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, Dynamo, translate, vertical </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.ElementOrientedBboxSolid(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double)">
+            <summary>
+            Returns element oriented bounding box for the specified element, represented as Revit API solid
+            </summary>
+            <param name="element"> Revit Family Instance || Tested with Windows and Doors </param>
+            <param name="point"> Point || Dynamo Point </param>
+            <param name="degAngle"> Decimal Degrees || Rotation Angle </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, boundingbox, element oriented </search>
+        </member>
+        <member name="M:Solids.SolidsAPI.ElementOrientedBboxSolidTransformed(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Returns element oriented bounding box for the specified element, represented as Revit API solid, transformed, based on the link instance coordinate system
+            </summary>
+            <param name="element"> Revit Family Instance || Tested with Windows and Doors </param>
+            <param name="point"> Point || Dynamo Point </param>
+            <param name="degAngle"> Decimal Degrees || Rotation Angle </param>
+            <param name="linkInstance"> Revit Link Instance </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, boundingbox, element oriented </search>
         </member>
     </members>
 </doc>

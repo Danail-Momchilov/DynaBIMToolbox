@@ -16,6 +16,7 @@ using Revit.GeometryConversion;
 using DynaBIMToolbox.Invisible;
 using System.Linq.Expressions;
 using System;
+using System.Security.Cryptography;
 
 
 // TO DO! Research NodeModel nodes with custom UI
@@ -160,10 +161,10 @@ namespace Solids
         /// <summary>
         /// Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop, extruding and transforming its coordinate system
         /// </summary>
-        /// <param name="line"> [points] || A straight Dynamo line </param>
-        /// <param name="width"> height || A specified width for the offset </param>
-        /// <param name="height"> Height for the extrusion </param>
-        /// <param name="linkInstance"> Height for the extrusion </param>
+        /// <param name="line"> Line || A straight Dynamo line </param>
+        /// <param name="width"> Double || A specified width for the offset </param>
+        /// <param name="height"> Double || Height for the extrusion </param>
+        /// <param name="linkInstance"> Revit Link Instance </param>
         /// <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
         /// <search> solid, API, Dynamo </search>
         public static Autodesk.Revit.DB.Solid RevitAPIExtrusionFromCurveTransformed(Autodesk.DesignScript.Geometry.Curve line, double width, double height, RevitLinkInstance linkInstance)
@@ -181,8 +182,8 @@ namespace Solids
         /// <summary>
         /// Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance
         /// </summary>
-        /// <param name="solid"> [points] || A straight Dynamo line </param>
-        /// <param name="translation"> height || A specified width for the offset </param>
+        /// <param name="solid"> Solid || Autodesk.Revit.DB.Solid </param>
+        /// <param name="translation"> Number || A specified distance for vertical translation </param>
         /// <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
         /// <search> solid, API, Dynamo, translate, vertical </search>
         public static Autodesk.Revit.DB.Solid TranslateSolidVertically(Autodesk.Revit.DB.Solid solid, double translation)
@@ -200,6 +201,14 @@ namespace Solids
             }
         }
 
+        /// <summary>
+        /// Returns element oriented bounding box for the specified element, represented as Revit API solid
+        /// </summary>
+        /// <param name="element"> Revit Family Instance || Tested with Windows and Doors </param>
+        /// <param name="point"> Point || Dynamo Point </param>
+        /// <param name="degAngle"> Decimal Degrees || Rotation Angle </param>
+        /// <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+        /// <search> solid, API, boundingbox, element oriented </search>
         public static Autodesk.Revit.DB.Solid ElementOrientedBboxSolid(Revit.Elements.Element element, Autodesk.DesignScript.Geometry.Point point, double degAngle)
         {
             try
@@ -208,18 +217,66 @@ namespace Solids
                 List<Revit.Elements.Element> elements = new List<Revit.Elements.Element> { element };
                 List<Autodesk.Revit.DB.Solid> elemSolids = SolidConversions.ReturnElementsSolids(elements);
 
-                // rotate all the solids to get the oriented with Project North
-                List<Autodesk.Revit.DB.Solid> rotatedSolids = SolidConversions.RotateSolidsAroundPoint(elemSolids, point, degAngle);
+                // define transform to align all the solids with Project North
+                XYZ centerPoint = new XYZ(point.X / 30.48, point.Y / 30.48, point.Z / 30.48);
+                double angleRadians = -degAngle * (Math.PI / 180);
+                Transform rotationTransform = Transform.CreateRotationAtPoint(XYZ.BasisZ, angleRadians, centerPoint);
 
-                // get boundingbox around the group of solids
-                BoundingBoxXYZ rotatedBbox = SolidConversions.BoundingBoxFromMultipleSolids(rotatedSolids);
+                // unite and transform solids
+                Autodesk.Revit.DB.Solid unitedSolid = SolidConversions.UniteSolids(elemSolids);
+                Autodesk.Revit.DB.Solid rotatedSolid = SolidUtils.CreateTransformed(unitedSolid, rotationTransform);
 
-                // create solid from bounding box element
-                List<Autodesk.Revit.DB.Solid> bboxSolid = new List<Autodesk.Revit.DB.Solid> { SolidConversions.BoundingBoxToSolid(rotatedBbox) };
+                // get and transform element bounding box
+                BoundingBoxXYZ bbox = rotatedSolid.GetBoundingBox();
+                Transform bboxTransform = bbox.Transform;
 
-                // rotate the solid back to its original angle and return
-                return SolidConversions.RotateSolidsAroundPoint(bboxSolid, point, -degAngle)[0];
+                // convert the bounding box to solid, rotate it back and return
+                Autodesk.Revit.DB.Solid bboxSolid = SolidUtils.CreateTransformed(SolidConversions.BoundingBoxToSolid(bbox), bboxTransform);
+                rotationTransform = Transform.CreateRotationAtPoint(XYZ.BasisZ, -angleRadians, centerPoint);
+                return SolidUtils.CreateTransformed(bboxSolid, rotationTransform);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
+        /// <summary>
+        /// Returns element oriented bounding box for the specified element, represented as Revit API solid, transformed, based on the link instance coordinate system
+        /// </summary>
+        /// <param name="element"> Revit Family Instance || Tested with Windows and Doors </param>
+        /// <param name="point"> Point || Dynamo Point </param>
+        /// <param name="degAngle"> Decimal Degrees || Rotation Angle </param>
+        /// <param name="linkInstance"> Revit Link Instance </param>
+        /// <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+        /// <search> solid, API, boundingbox, element oriented </search>
+        public static Autodesk.Revit.DB.Solid ElementOrientedBboxSolidTransformed(Revit.Elements.Element element, Autodesk.DesignScript.Geometry.Point point, double degAngle, RevitLinkInstance linkInstance)
+        {
+            try
+            {
+                // get all solids of the element
+                List<Revit.Elements.Element> elements = new List<Revit.Elements.Element> { element };
+                List<Autodesk.Revit.DB.Solid> elemSolids = SolidConversions.ReturnElementsSolids(elements);
+
+                // define transform to align all the solids with Project North
+                XYZ centerPoint = new XYZ(point.X / 30.48, point.Y / 30.48, point.Z / 30.48);
+                double angleRadians = -degAngle * (Math.PI / 180);
+                Transform rotationTransform = Transform.CreateRotationAtPoint(XYZ.BasisZ, angleRadians, centerPoint);
+
+                // unite and transform solids
+                Autodesk.Revit.DB.Solid unitedSolid = SolidConversions.UniteSolids(elemSolids);
+                Autodesk.Revit.DB.Solid rotatedSolid = SolidUtils.CreateTransformed(unitedSolid, rotationTransform);
+
+                // get and transform element bounding box
+                BoundingBoxXYZ bbox = rotatedSolid.GetBoundingBox();
+                Transform bboxTransform = bbox.Transform;
+
+                // convert the bounding box to solid, rotate it back and transform, based on the linkinstance coordinates
+                Autodesk.Revit.DB.Solid bboxSolid = SolidUtils.CreateTransformed(SolidConversions.BoundingBoxToSolid(bbox), bboxTransform);
+                rotationTransform = Transform.CreateRotationAtPoint(XYZ.BasisZ, -angleRadians, centerPoint);
+                Autodesk.Revit.DB.Solid negativeRotationSolid = SolidUtils.CreateTransformed(bboxSolid, rotationTransform);
+
+                return SolidConversions.ReturnTransformedSolid(negativeRotationSolid, linkInstance);
             }
             catch (Exception e)
             {
