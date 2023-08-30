@@ -4,7 +4,7 @@
         <name>DynaBIMToolbox</name>
     </assembly>
     <members>
-        <member name="M:Solids.SolidsAPI.GetWallSolid(Revit.Elements.Wall)">
+        <member name="M:GeometryAPI.SolidsAPI.GetWallSolid(Revit.Elements.Wall)">
             <summary>
             Get the Autodesk.DB.Solid for the specified wall
             </summary>
@@ -12,7 +12,7 @@
             <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
             <search> wall, solid, API </search>
         </member>
-        <member name="M:Solids.SolidsAPI.GetWallSolidTransformed(Revit.Elements.Wall,Autodesk.Revit.DB.RevitLinkInstance)">
+        <member name="M:GeometryAPI.SolidsAPI.GetWallSolidTransformed(Revit.Elements.Wall,Autodesk.Revit.DB.RevitLinkInstance)">
             <summary>
             Get the Autodesk.DB.Solid for the specified wall from linked model
             </summary>
@@ -21,7 +21,7 @@
             <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
             <search> wall, solid, API </search>
         </member>
-        <member name="M:Solids.SolidsAPI.GetAndUniteElementSolids(Revit.Elements.Element)">
+        <member name="M:GeometryAPI.SolidsAPI.GetAndUniteElementSolids(Revit.Elements.Element)">
             <summary>
             Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
             </summary>
@@ -29,7 +29,7 @@
             <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
             <search> element, solid, API </search>
         </member>
-        <member name="M:Solids.SolidsAPI.GetAndUniteElementSolidsTransformed(Revit.Elements.Element,Autodesk.Revit.DB.RevitLinkInstance)">
+        <member name="M:GeometryAPI.SolidsAPI.GetAndUniteElementSolidsTransformed(Revit.Elements.Element,Autodesk.Revit.DB.RevitLinkInstance)">
             <summary>
             Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
             </summary>
@@ -38,7 +38,7 @@
             <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
             <search> element, solid, API </search>
         </member>
-        <member name="M:Solids.SolidsAPI.ReturnDynamoSolid(Autodesk.Revit.DB.Solid)">
+        <member name="M:GeometryAPI.SolidsAPI.ReturnDynamoSolid(Autodesk.Revit.DB.Solid)">
             <summary>
             Wrap Revit Autodesk.Revit.DB.Solid to get Dynamo solid
             </summary>
@@ -46,7 +46,7 @@
             <returns> Autodesk.DesignScript.Geometry || Dynamo Solid </returns>
             <search> solid, API, Dynamo </search>
         </member>
-        <member name="M:Solids.SolidsAPI.RevitAPIExtrusionFromCurve(Autodesk.DesignScript.Geometry.Curve,System.Double,System.Double)">
+        <member name="M:GeometryAPI.SolidsAPI.RevitAPIExtrusionFromCurve(Autodesk.DesignScript.Geometry.Curve,System.Double,System.Double)">
             <summary>
             Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop and extruding it
             </summary>
@@ -56,7 +56,7 @@
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, Dynamo </search>
         </member>
-        <member name="M:Solids.SolidsAPI.RevitAPIExtrusionFromCurveTransformed(Autodesk.DesignScript.Geometry.Curve,System.Double,System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
+        <member name="M:GeometryAPI.SolidsAPI.RevitAPIExtrusionFromCurveTransformed(Autodesk.DesignScript.Geometry.Curve,System.Double,System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
             <summary>
             Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop, extruding and transforming its coordinate system
             </summary>
@@ -67,7 +67,7 @@
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, Dynamo </search>
         </member>
-        <member name="M:Solids.SolidsAPI.TranslateSolidVertically(Autodesk.Revit.DB.Solid,System.Double)">
+        <member name="M:GeometryAPI.SolidsAPI.TranslateSolidVertically(Autodesk.Revit.DB.Solid,System.Double)">
             <summary>
             Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance
             </summary>
@@ -76,7 +76,7 @@
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, Dynamo, translate, vertical </search>
         </member>
-        <member name="M:Solids.SolidsAPI.ElementOrientedBboxSolid(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double)">
+        <member name="M:GeometryAPI.SolidsAPI.ElementOrientedBboxSolid(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double)">
             <summary>
             Returns element oriented bounding box for the specified element, represented as Revit API solid
             </summary>
@@ -86,7 +86,7 @@
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, boundingbox, element oriented </search>
         </member>
-        <member name="M:Solids.SolidsAPI.ElementOrientedBboxSolidTransformed(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
+        <member name="M:GeometryAPI.SolidsAPI.ElementOrientedBboxSolidTransformed(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
             <summary>
             Returns element oriented bounding box for the specified element, represented as Revit API solid, transformed, based on the link instance coordinate system
             </summary>

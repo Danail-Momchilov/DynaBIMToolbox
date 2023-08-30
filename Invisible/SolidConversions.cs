@@ -147,7 +147,6 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
-        // potential issues - Revise!
         public static Autodesk.Revit.DB.Solid CreateSolidExtrusion(List<Autodesk.DesignScript.Geometry.Point> points, double height)
         {
             try
@@ -173,7 +172,6 @@ namespace DynaBIMToolbox.Invisible
                 throw e;
             }
         }
-        // potential issues - Revise!
 
         public static Autodesk.Revit.DB.Solid CreateSolidExtrusionFromCurve(Autodesk.DesignScript.Geometry.Curve line, double width, double height)
         {

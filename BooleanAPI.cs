@@ -17,13 +17,14 @@ using DynaBIMToolbox.Invisible;
 using System.Linq.Expressions;
 using System;
 using System.Security.Cryptography;
+using System.Linq;
 
 
 // TO DO! Research NodeModel nodes with custom UI
 
 
 // namespace : interpreted as a main category in the package
-namespace Solids
+namespace GeometryAPI
 {
     // class : interpreted as a subcategory 
     public class SolidsAPI
@@ -277,6 +278,62 @@ namespace Solids
                 Autodesk.Revit.DB.Solid negativeRotationSolid = SolidUtils.CreateTransformed(bboxSolid, rotationTransform);
 
                 return SolidConversions.ReturnTransformedSolid(negativeRotationSolid, linkInstance);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+    }
+
+    // class : interpreted as a subcategory
+    public class SurfacesAPI
+    {
+        // constructors : labelled as a create node in the subcategory (if private and empty it will not be displayed) : it is preferable to use the "By" keyword, when possible
+        private SurfacesAPI() {}
+
+        public static List<PlanarFace> WallSurfacesFromRooms(Revit.Elements.Room room)
+        {
+            try
+            {
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
+
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish;
+
+                List<Autodesk.Revit.DB.Curve> roomCurves = new List<Autodesk.Revit.DB.Curve>();
+
+                foreach (BoundarySegment segment in revitRoom.GetBoundarySegments(options)[0])
+                    roomCurves.Add(segment.GetCurve());
+
+                CurveLoop crvLoop = CurveLoop.Create(roomCurves);
+                List<CurveLoop> crvLoopList = new List<CurveLoop> { crvLoop };
+
+                Autodesk.Revit.DB.Solid roomSolid = GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, 5);
+
+                List<PlanarFace> roomFaces = new List<PlanarFace>();
+
+                foreach (PlanarFace face in roomSolid.Faces)
+                    roomFaces.Add(face);
+
+                return roomFaces;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static List<Autodesk.DesignScript.Geometry.Surface> ReturnDynamoFaces(PlanarFace face)
+        {
+            try
+            {
+                List<Autodesk.DesignScript.Geometry.Surface> surfacesList = new List<Autodesk.DesignScript.Geometry.Surface>();
+
+                foreach (Autodesk.DesignScript.Geometry.Surface surface in face.ToProtoType())
+                    surfacesList.Add(surface);
+
+                return surfacesList;
             }
             catch (Exception e)
             {
