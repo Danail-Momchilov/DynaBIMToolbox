@@ -22,7 +22,6 @@ using System.Linq;
 
 // TO DO! Research NodeModel nodes with custom UI
 
-
 // namespace : interpreted as a main category in the package
 namespace GeometryAPI
 {
@@ -34,9 +33,9 @@ namespace GeometryAPI
 
         // methods : interpreted as a modify node
         /// <summary>
-        /// Get the Autodesk.DB.Solid for the specified wall
+        /// Get Dynamo wall and return its solid geometry as Revit API solid
         /// </summary>
-        /// <param name="hostModelWall"> Wall instance </param>
+        /// <param name="hostModelWall"> Wall || A wall instance from the host model </param>
         /// <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
         /// <search> wall, solid, API </search>
         public static Autodesk.Revit.DB.Solid GetWallSolid(Revit.Elements.Wall hostModelWall)
@@ -290,12 +289,26 @@ namespace GeometryAPI
     public class SurfacesAPI
     {
         // constructors : labelled as a create node in the subcategory (if private and empty it will not be displayed) : it is preferable to use the "By" keyword, when possible
-        private SurfacesAPI() {}
+        private SurfacesAPI() { }
 
-        public static List<PlanarFace> WallSurfacesFromRooms(Revit.Elements.Room room)
+        // methods : interpreted as a modify node
+        /// <summary>
+        /// Get a list of Autodesk.Revit.DB.PlanarFace, representing all the wall faces of a room, based on specified height and base offset
+        /// </summary>
+        /// <param name="room"> Room </param>
+        /// <param name="height"> double height </param>
+        /// <param name="baseOffset"> double base offset </param>
+        /// <returns> List[PlanarFace] || List of planar faces, representing wall finish surfaces </returns>
+        /// <search> room, faces, API </search>
+        public static List<PlanarFace> WallSurfacesFromRooms(Revit.Elements.Room room, double height, double baseOffset)
         {
             try
             {
+                XYZ translationVector = new XYZ(0, 0, baseOffset / 30.48);
+                Transform translationTransform = Transform.CreateTranslation(translationVector);
+
+                double heightFeet = height / 30.48;
+
                 Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
 
                 SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
@@ -309,12 +322,14 @@ namespace GeometryAPI
                 CurveLoop crvLoop = CurveLoop.Create(roomCurves);
                 List<CurveLoop> crvLoopList = new List<CurveLoop> { crvLoop };
 
-                Autodesk.Revit.DB.Solid roomSolid = GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, 5);
+                Autodesk.Revit.DB.Solid roomSolid = GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, heightFeet);
+                roomSolid = SolidUtils.CreateTransformed(roomSolid, translationTransform);
 
                 List<PlanarFace> roomFaces = new List<PlanarFace>();
 
                 foreach (PlanarFace face in roomSolid.Faces)
-                    roomFaces.Add(face);
+                    if (SurfaceConversions.isFaceVertical(face))
+                        roomFaces.Add(face);
 
                 return roomFaces;
             }
@@ -324,6 +339,13 @@ namespace GeometryAPI
             }
         }
 
+        // methods : interpreted as a modify node
+        /// <summary>
+        /// Surface wrapper - gets an Autodesk.Revit.DB.Surface and returns Dynamo surface
+        /// </summary>
+        /// <param name="face"> Autodesk.Revit.DB.PlanarFace || Revit API PlanarFace </param>
+        /// <returns> Dynamo Surface </returns>
+        /// <search> PlanarFace, surface, API </search>
         public static List<Autodesk.DesignScript.Geometry.Surface> ReturnDynamoFaces(PlanarFace face)
         {
             try
@@ -334,6 +356,53 @@ namespace GeometryAPI
                     surfacesList.Add(surface);
 
                 return surfacesList;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+    }
+
+    public class BooleanAPI
+    {
+        private BooleanAPI() { }
+
+        // methods : interpreted as a modify node
+        /// <summary>
+        /// Gets a list of Autodesk.Revit.DB.PlanarFace elements, as well as Revit API Solids. Generates the sum of all the faces areas, computes intersection of these faces with the solids and subtracts the summed area of all intersections
+        /// </summary>
+        /// <param name="face"> Autodesk.Revit.DB.PlanarFace || Revit API PlanarFace </param>
+        /// <returns> Dynamo Surface </returns>
+        /// <search> PlanarFace, surface, API </search>
+        public static double SurfaceSolidIntersectionRemainingArea(List<PlanarFace> faces, List<Autodesk.Revit.DB.Solid> solids)
+        {
+            try
+            {
+                List<Autodesk.Revit.DB.Solid> test = new List<Autodesk.Revit.DB.Solid>();
+                double intersectionAreas = 0;
+                double roomWallAreas = 0;
+
+                foreach (PlanarFace face in faces)
+                {
+                    roomWallAreas += face.Area * 0.092;
+
+                    List<CurveLoop> faceCurveLoops = (List<CurveLoop>)face.GetEdgesAsCurveLoops();
+
+                    Autodesk.Revit.DB.Solid faceSolid = GeometryCreationUtilities.CreateExtrusionGeometry(faceCurveLoops, face.FaceNormal, 0.0328083989501312);
+                    Autodesk.Revit.DB.Solid faceSolidNegative = GeometryCreationUtilities.CreateExtrusionGeometry(faceCurveLoops, -face.FaceNormal, 0.0328083989501312);
+                    faceSolid = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, faceSolidNegative, BooleanOperationsType.Union);
+
+                    foreach (Autodesk.Revit.DB.Solid solid in solids)
+                    {
+                        Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, solid, BooleanOperationsType.Intersect);
+
+                        if (intersection != null && intersection.Volume != 0)
+                            intersectionAreas += SurfaceConversions.largestVerticalFaceArea(intersection.Faces);
+                    }
+                }
+
+                return roomWallAreas - intersectionAreas;
             }
             catch (Exception e)
             {
