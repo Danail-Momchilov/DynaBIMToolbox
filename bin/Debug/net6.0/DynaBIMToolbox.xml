@@ -115,13 +115,21 @@
             <returns> Dynamo Surface </returns>
             <search> PlanarFace, surface, API </search>
         </member>
-        <member name="M:GeometryAPI.BooleanAPI.SurfaceSolidIntersectionRemainingArea(System.Collections.Generic.List{Autodesk.Revit.DB.PlanarFace},System.Collections.Generic.List{Autodesk.Revit.DB.Solid})">
+        <member name="M:GeometryAPI.BooleanAPI.RoomFacesSolidIntersection(Revit.Elements.Room,System.Collections.Generic.List{Autodesk.Revit.DB.Solid},System.Double,System.Double)">
             <summary>
-            Gets a list of Autodesk.Revit.DB.PlanarFace elements, as well as Revit API Solids. Generates the sum of all the faces areas, computes intersection of these faces with the solids and subtracts the summed area of all intersections
+            Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
             </summary>
-            <param name="face"> Autodesk.Revit.DB.PlanarFace || Revit API PlanarFace </param>
-            <returns> Dynamo Surface </returns>
-            <search> PlanarFace, surface, API </search>
+            <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+            <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
+            <search> room, surface, solid, API </search>
+        </member>
+        <member name="M:GeometryAPI.BooleanAPI.RoomSurfaceIntersectionAreas(Revit.Elements.Room,System.Collections.Generic.List{Autodesk.Revit.DB.Solid},System.Double,System.Double)">
+            <summary>
+            Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
+            </summary>
+            <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+            <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
+            <search> room, surface, solid, API </search>
         </member>
     </members>
 </doc>

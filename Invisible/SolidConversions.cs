@@ -190,6 +190,21 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
+        public static Autodesk.Revit.DB.Solid CreateSolidExtrusionFromRevitCurve(Autodesk.Revit.DB.Curve curve, double width, double height)
+        {
+            try
+            {
+                XYZ verticalNormal = new XYZ(0, 0, 1);
+
+                List<CurveLoop> crvLoop = new List<CurveLoop> { CurveLoop.CreateViaThicken(curve, width / 30.48, verticalNormal) };
+                return GeometryCreationUtilities.CreateExtrusionGeometry(crvLoop, XYZ.BasisZ, height / 30.48);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         public static Autodesk.Revit.DB.Solid UniteSolids(List<Autodesk.Revit.DB.Solid> solids)
         {
             try
@@ -232,74 +247,6 @@ namespace DynaBIMToolbox.Invisible
                 throw e;
             }
         }
-
-        /*
-        public static List<Autodesk.Revit.DB.Solid> RotateSolidsAroundPoint(List<Autodesk.Revit.DB.Solid> solids, Autodesk.DesignScript.Geometry.Point rotationCenter, double angleDegree)
-        {
-            try
-            {
-                if (solids == null || solids.Count == 0)
-                {
-                    throw new ArgumentException("The list of solids is empty.");
-                }
-
-                XYZ centerPoint = new XYZ(rotationCenter.X / 30.48, rotationCenter.Y / 30.48, rotationCenter.Z / 30.48);
-
-                double angleRadians = angleDegree * (Math.PI / 180);
-
-                Transform rotationTransform = Transform.CreateRotationAtPoint(XYZ.BasisZ, angleRadians, centerPoint);
-
-                List<Autodesk.Revit.DB.Solid> rotatedSolids = new List<Autodesk.Revit.DB.Solid>();
-
-                foreach (Autodesk.Revit.DB.Solid solid in solids)
-                {
-                    Autodesk.Revit.DB.Solid rotatedSolid = SolidUtils.CreateTransformed(solid, rotationTransform);
-                    rotatedSolids.Add(rotatedSolid);
-                }
-
-                return rotatedSolids;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        
-        public static BoundingBoxXYZ BoundingBoxFromMultipleSolids(List<Autodesk.Revit.DB.Solid> solids)
-        {
-            try
-            {
-                if (solids == null || solids.Count == 0)
-                {
-                    throw new ArgumentException("The list of solids is empty.");
-                }
-
-                XYZ minPt = solids[0].GetBoundingBox().Min;
-                XYZ maxPt = solids[0].GetBoundingBox().Max;
-
-                if (solids.Count != 1)
-                {
-                    foreach (Autodesk.Revit.DB.Solid solid in solids)
-                    {
-                        BoundingBoxXYZ bBox = solid.GetBoundingBox();
-
-                        minPt = PointConversions.GetMinimumPoint(minPt, bBox.Min);
-                        maxPt = PointConversions.GetMaximumPoint(maxPt, bBox.Max);
-                    }
-                }
-
-                BoundingBoxXYZ finalBbox = new BoundingBoxXYZ();
-                finalBbox.Min = minPt;
-                finalBbox.Max = maxPt;
-
-                return finalBbox;
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }*/
 
         public static Autodesk.Revit.DB.Solid BoundingBoxToSolid(BoundingBoxXYZ bbox)
         {

@@ -29,20 +29,24 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
-        public static double largestVerticalFaceArea(FaceArray faces)
+        public static PlanarFace largestVerticalFace(FaceArray faces)
         {
             try
             {
                 double largestArea = 0;
+                List<PlanarFace> largestFaces = new List<PlanarFace>();
 
                 foreach (PlanarFace face in faces)
                 {
                     if (face.FaceNormal.Z != 1 && face.FaceNormal.Z != -1)
                         if (face.Area >= largestArea)
-                            largestArea = face.Area * 0.092;
+                        {
+                            largestArea = face.Area;
+                            largestFaces.Add(face);
+                        }
                 }
 
-                return largestArea;
+                return largestFaces.Last();
             }
             catch (Exception e)
             {

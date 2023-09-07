@@ -18,6 +18,7 @@ using System.Linq.Expressions;
 using System;
 using System.Security.Cryptography;
 using System.Linq;
+using Autodesk.Revit.DB.Architecture;
 
 
 // TO DO! Research NodeModel nodes with custom UI
@@ -370,39 +371,154 @@ namespace GeometryAPI
 
         // methods : interpreted as a modify node
         /// <summary>
-        /// Gets a list of Autodesk.Revit.DB.PlanarFace elements, as well as Revit API Solids. Generates the sum of all the faces areas, computes intersection of these faces with the solids and subtracts the summed area of all intersections
+        /// Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
         /// </summary>
-        /// <param name="face"> Autodesk.Revit.DB.PlanarFace || Revit API PlanarFace </param>
-        /// <returns> Dynamo Surface </returns>
-        /// <search> PlanarFace, surface, API </search>
-        public static double SurfaceSolidIntersectionRemainingArea(List<PlanarFace> faces, List<Autodesk.Revit.DB.Solid> solids)
+        /// <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+        /// <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
+        /// <search> room, surface, solid, API </search>
+        [MultiReturn(new[] { "surfaceIntersections", "roomExceptions" })]
+        public static Dictionary<string, object> RoomFacesSolidIntersection(Revit.Elements.Room room, List<Autodesk.Revit.DB.Solid> solids, double baseOffset, double height)
         {
             try
             {
-                List<Autodesk.Revit.DB.Solid> test = new List<Autodesk.Revit.DB.Solid>();
-                double intersectionAreas = 0;
-                double roomWallAreas = 0;
+                // unwrap Dynamo rooms to get Revit rooms
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
 
-                foreach (PlanarFace face in faces)
+                // get room's curves from the specified room
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish;
+
+                List<Autodesk.Revit.DB.Curve> roomCurves = new List<Autodesk.Revit.DB.Curve>();
+
+                foreach (BoundarySegment segment in revitRoom.GetBoundarySegments(options)[0])
+                    roomCurves.Add(segment.GetCurve());
+
+                // generate thin solids for each room wall surface
+                List<Autodesk.Revit.DB.Solid> roomWallFaceSolids = new List<Autodesk.Revit.DB.Solid>();
+
+                foreach (Autodesk.Revit.DB.Curve roomCurve in roomCurves)
+                    roomWallFaceSolids.Add(SolidConversions.CreateSolidExtrusionFromRevitCurve(roomCurve, 5, height));
+
+                // define the output lists
+                List<PlanarFace> faceIntersections = new List<PlanarFace>();
+                List<Revit.Elements.Room> returnRoom = new List<Revit.Elements.Room>();
+
+                // intersect rooms wall face solids with all the DB.Solids provided as an input
+                foreach (Autodesk.Revit.DB.Solid faceSolid in roomWallFaceSolids)
                 {
-                    roomWallAreas += face.Area * 0.092;
-
-                    List<CurveLoop> faceCurveLoops = (List<CurveLoop>)face.GetEdgesAsCurveLoops();
-
-                    Autodesk.Revit.DB.Solid faceSolid = GeometryCreationUtilities.CreateExtrusionGeometry(faceCurveLoops, face.FaceNormal, 0.0328083989501312);
-                    Autodesk.Revit.DB.Solid faceSolidNegative = GeometryCreationUtilities.CreateExtrusionGeometry(faceCurveLoops, -face.FaceNormal, 0.0328083989501312);
-                    faceSolid = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, faceSolidNegative, BooleanOperationsType.Union);
-
                     foreach (Autodesk.Revit.DB.Solid solid in solids)
                     {
-                        Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, solid, BooleanOperationsType.Intersect);
+                        try
+                        {
+                            // create intersectoins
+                            Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, solid, BooleanOperationsType.Intersect);
 
-                        if (intersection != null && intersection.Volume != 0)
-                            intersectionAreas += SurfaceConversions.largestVerticalFaceArea(intersection.Faces);
+                            // extracnt the singel largest vertical face of each intersection
+                            if (intersection != null && intersection.Volume != 0)
+                                faceIntersections.Add(SurfaceConversions.largestVerticalFace(intersection.Faces));
+                        }
+                        catch
+                        {
+                            // catch exceptions if any, indication there might be a slight miscalculation with the given room
+                            returnRoom.Add(room);
+                        }
                     }
                 }
 
-                return roomWallAreas - intersectionAreas;
+                // define outputs
+                Dictionary<string, object> returnDict = new Dictionary<string, object>();
+                returnDict.Add("surfaceIntersections", faceIntersections);
+
+                if (returnRoom.Count != 0)
+                    returnDict.Add("roomExceptions", returnRoom[0]);
+                else
+                    returnDict.Add("roomExceptions", null);
+
+                return returnDict;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        // methods : interpreted as a modify node
+        /// <summary>
+        /// Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
+        /// </summary>
+        /// <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+        /// <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
+        /// <search> room, surface, solid, API </search>
+        [MultiReturn(new[] { "wallSurfacesArea", "wallSurfaceIntersectionsArea", "remainingWallSurfaceArea", "roomExceptions" })]
+        public static Dictionary<string, object> RoomSurfaceIntersectionAreas(Revit.Elements.Room room, List<Autodesk.Revit.DB.Solid> solids, double baseOffset, double height)
+        {
+            try
+            {
+                // unwrap Dynamo rooms to get Revit rooms
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
+
+                // get room's curves from the specified room
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish;
+
+                List<Autodesk.Revit.DB.Curve> roomCurves = new List<Autodesk.Revit.DB.Curve>();
+
+                foreach (BoundarySegment segment in revitRoom.GetBoundarySegments(options)[0])
+                    roomCurves.Add(segment.GetCurve());
+
+                // generate thin solids for each room wall surface
+                List<Autodesk.Revit.DB.Solid> roomWallFaceSolids = new List<Autodesk.Revit.DB.Solid>();
+
+                foreach (Autodesk.Revit.DB.Curve roomCurve in roomCurves)
+                    roomWallFaceSolids.Add(SolidConversions.CreateSolidExtrusionFromRevitCurve(roomCurve, 5, height));
+
+                // define the output lists
+                List<PlanarFace> faceIntersections = new List<PlanarFace>();
+                List<Revit.Elements.Room> returnRoom = new List<Revit.Elements.Room>();
+
+                // intersect rooms wall face solids with all the DB.Solids provided as an input
+                double roomWallsArea = 0;
+                double roomIntersectionAreas = 0;
+
+                foreach (Autodesk.Revit.DB.Solid faceSolid in roomWallFaceSolids)
+                {
+                    // extract the single largest vertical face of each wall solid and add its area to the total sum
+                    roomWallsArea += (SurfaceConversions.largestVerticalFace(faceSolid.Faces).Area) / 10.7639;
+
+                    foreach (Autodesk.Revit.DB.Solid solid in solids)
+                    {
+                        try
+                        {
+                            // create intersectoin
+                            Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, solid, BooleanOperationsType.Intersect);
+
+                            // extract the single largest vertical face of each intersection and add its area to the total sum
+                            if (intersection != null && intersection.Volume != 0)
+                                roomIntersectionAreas += (SurfaceConversions.largestVerticalFace(intersection.Faces).Area) / 10.7639;
+                        }
+                        catch
+                        {
+                            // catch exceptions if any, indication there might be a slight miscalculation with the given room
+                            returnRoom.Add(room);
+                        }
+                    }
+                }
+
+                // define outputs
+                Dictionary<string, object> returnDict = new Dictionary<string, object>();
+                returnDict.Add("wallSurfacesArea", roomWallsArea);
+                returnDict.Add("wallSurfaceIntersectionsArea", roomIntersectionAreas);
+                returnDict.Add("remainingWallSurfaceArea", roomWallsArea - roomIntersectionAreas);
+                /*
+                if (returnRoom.Count != 0)
+                    returnDict.Add("roomExceptions", returnRoom[0]);
+                else
+                    returnDict.Add("roomExceptions", null);*/
+                //test
+                returnDict.Add("roomExceptions", roomWallFaceSolids);
+                //test
+
+                return returnDict;
             }
             catch (Exception e)
             {
