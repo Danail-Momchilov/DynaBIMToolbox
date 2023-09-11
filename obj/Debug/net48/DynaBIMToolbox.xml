@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>DynaBIMToolbox</name>
+    </assembly>
+    <members>
+        <member name="M:GeometryAPI.SolidsAPI.GetWallSolid(Revit.Elements.Wall)">
+            <summary>
+            Get Dynamo wall and return its solid geometry as Revit API solid
+            </summary>
+            <param name="hostModelWall"> Wall || A wall instance from the host model </param>
+            <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
+            <search> wall, solid, API </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.GetWallSolidTransformed(Revit.Elements.Wall,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Get the Autodesk.DB.Solid for the specified wall from linked model
+            </summary>
+            <param name="linkModelWall"> Wall || A wall instance from linked model </param>
+            <param name="linkInstance"> LinkInstance || Revit Link Instance </param>
+            <returns> Autodesk.DB.Solid || The solid, representing the wall Geometry in the API </returns>
+            <search> wall, solid, API </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.GetAndUniteElementSolids(Revit.Elements.Element)">
+            <summary>
+            Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+            </summary>
+            <param name="element"> Element || Revit.Elements.Element </param>
+            <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
+            <search> element, solid, API </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.GetAndUniteElementSolidsTransformed(Revit.Elements.Element,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Get all the solids of an Element, unite them and return the united solid with transformed coordinate system, based on the link instance. Works for all objects, classified as Dynamo Elements, such as Windows, Doors, etc.
+            </summary>
+            <param name="element"> Element || Revit.Elements.Element </param>
+            <param name="linkInstance"> LinkInstance || Revit Link Instance </param>
+            <returns> Autodesk.DB.Solid || A single solid, representing all element solids in the API </returns>
+            <search> element, solid, API </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.ReturnDynamoSolid(Autodesk.Revit.DB.Solid)">
+            <summary>
+            Wrap Revit Autodesk.Revit.DB.Solid to get Dynamo solid
+            </summary>
+            <param name="solid"> Solid || Autodesk.Revit.DB.Solid </param>
+            <returns> Autodesk.DesignScript.Geometry || Dynamo Solid </returns>
+            <search> solid, API, Dynamo </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.RevitAPIExtrusionFromCurve(Autodesk.DesignScript.Geometry.Curve,System.Double,System.Double)">
+            <summary>
+            Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop and extruding it
+            </summary>
+            <param name="line"> [points] || A straight Dynamo line </param>
+            <param name="width"> height || A specified width for the offset </param>
+            <param name="height"> Height for the extrusion </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, Dynamo </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.RevitAPIExtrusionFromCurveTransformed(Autodesk.DesignScript.Geometry.Curve,System.Double,System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Create Autodesk.Revit.DB.Solid from a single curve, by offseting the curve in both direction, creating closed curveloop, extruding and transforming its coordinate system
+            </summary>
+            <param name="line"> Line || A straight Dynamo line </param>
+            <param name="width"> Double || A specified width for the offset </param>
+            <param name="height"> Double || Height for the extrusion </param>
+            <param name="linkInstance"> Revit Link Instance </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, Dynamo </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.TranslateSolidVertically(Autodesk.Revit.DB.Solid,System.Double)">
+            <summary>
+            Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance
+            </summary>
+            <param name="solid"> Solid || Autodesk.Revit.DB.Solid </param>
+            <param name="translation"> Number || A specified distance for vertical translation </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, Dynamo, translate, vertical </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.ElementOrientedBboxSolid(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double)">
+            <summary>
+            Returns element oriented bounding box for the specified element, represented as Revit API solid
+            </summary>
+            <param name="element"> Revit Family Instance || Tested with Windows and Doors </param>
+            <param name="point"> Point || Dynamo Point </param>
+            <param name="degAngle"> Decimal Degrees || Rotation Angle </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, boundingbox, element oriented </search>
+        </member>
+        <member name="M:GeometryAPI.SolidsAPI.ElementOrientedBboxSolidTransformed(Revit.Elements.Element,Autodesk.DesignScript.Geometry.Point,System.Double,Autodesk.Revit.DB.RevitLinkInstance)">
+            <summary>
+            Returns element oriented bounding box for the specified element, represented as Revit API solid, transformed, based on the link instance coordinate system
+            </summary>
+            <param name="element"> Revit Family Instance || Tested with Windows and Doors </param>
+            <param name="point"> Point || Dynamo Point </param>
+            <param name="degAngle"> Decimal Degrees || Rotation Angle </param>
+            <param name="linkInstance"> Revit Link Instance </param>
+            <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
+            <search> solid, API, boundingbox, element oriented </search>
+        </member>
+        <member name="M:GeometryAPI.SurfacesAPI.WallSurfacesFromRooms(Revit.Elements.Room,System.Double,System.Double)">
+            <summary>
+            Get a list of Autodesk.Revit.DB.PlanarFace, representing all the wall faces of a room, based on specified height and base offset
+            </summary>
+            <param name="room"> Room </param>
+            <param name="height"> double height </param>
+            <param name="baseOffset"> double base offset </param>
+            <returns> List[PlanarFace] || List of planar faces, representing wall finish surfaces </returns>
+            <search> room, faces, API </search>
+        </member>
+        <member name="M:GeometryAPI.SurfacesAPI.ReturnDynamoFaces(Autodesk.Revit.DB.PlanarFace)">
+            <summary>
+            Surface wrapper - gets an Autodesk.Revit.DB.Surface and returns Dynamo surface
+            </summary>
+            <param name="face"> Autodesk.Revit.DB.PlanarFace || Revit API PlanarFace </param>
+            <returns> Dynamo Surface </returns>
+            <search> PlanarFace, surface, API </search>
+        </member>
+        <member name="M:GeometryAPI.BooleanAPI.RoomFacesSolidIntersection(Revit.Elements.Room,System.Collections.Generic.List{Autodesk.Revit.DB.Solid},System.Double,System.Double)">
+            <summary>
+            Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
+            </summary>
+            <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+            <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
+            <search> room, surface, solid, API </search>
+        </member>
+        <member name="M:GeometryAPI.BooleanAPI.RoomSurfaceIntersectionAreas(Revit.Elements.Room,System.Collections.Generic.List{Autodesk.Revit.DB.Solid},System.Double,System.Double)">
+            <summary>
+            Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
+            </summary>
+            <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+            <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
+            <search> room, surface, solid, API </search>
+        </member>
+        <member name="T:DynaBIMToolbox.Properties.Resources">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:DynaBIMToolbox.Properties.Resources.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:DynaBIMToolbox.Properties.Resources.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+    </members>
+</doc>

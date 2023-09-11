@@ -508,15 +508,12 @@ namespace GeometryAPI
                 Dictionary<string, object> returnDict = new Dictionary<string, object>();
                 returnDict.Add("wallSurfacesArea", roomWallsArea);
                 returnDict.Add("wallSurfaceIntersectionsArea", roomIntersectionAreas);
-                returnDict.Add("remainingWallSurfaceArea", roomWallsArea - roomIntersectionAreas);
-                /*
+                returnDict.Add("remainingWallSurfaceArea", Math.Max(roomWallsArea - roomIntersectionAreas, 0));
+
                 if (returnRoom.Count != 0)
                     returnDict.Add("roomExceptions", returnRoom[0]);
                 else
-                    returnDict.Add("roomExceptions", null);*/
-                //test
-                returnDict.Add("roomExceptions", roomWallFaceSolids);
-                //test
+                    returnDict.Add("roomExceptions", null);
 
                 return returnDict;
             }
