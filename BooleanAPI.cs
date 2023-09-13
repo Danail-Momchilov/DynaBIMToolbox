@@ -151,7 +151,10 @@ namespace GeometryAPI
         {
             try
             {
-                return SolidConversions.CreateSolidExtrusionFromCurve(line, width, height);
+                if (line == null)
+                    return null;
+                else
+                    return SolidConversions.CreateSolidExtrusionFromCurve(line, width, height);
             }
             catch (Exception e)
             {
@@ -447,7 +450,22 @@ namespace GeometryAPI
         /// Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
         /// </summary>
         /// <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
-        /// <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
+        /// <returns>
+        /// <list type = "bullet">
+        /// <item>
+        /// <description> test1 </description>
+        /// </item>
+        /// <item>
+        /// <description> test2 </description>
+        /// </item>
+        /// <item>
+        /// <description> test3 </description>
+        /// </item>
+        /// <item>
+        /// <description> test4 </description>
+        /// </item>
+        /// </list>
+        /// </returns>
         /// <search> room, surface, solid, API </search>
         [MultiReturn(new[] { "wallSurfacesArea", "wallSurfaceIntersectionsArea", "remainingWallSurfaceArea", "roomExceptions" })]
         public static Dictionary<string, object> RoomSurfaceIntersectionAreas(Revit.Elements.Room room, List<Autodesk.Revit.DB.Solid> solids, double baseOffset, double height)
@@ -516,6 +534,34 @@ namespace GeometryAPI
                     returnDict.Add("roomExceptions", null);
 
                 return returnDict;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+    }
+}
+
+namespace Inspect
+{
+    public class ElementsData
+    {
+        private ElementsData() { }
+
+        /// <summary>
+        /// Gets an element, belonging to a system family, e.g. Waals, Roofs, Floors, Ceilings. Works for both linked elements and well as elements in the host model
+        /// </summary>
+        /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
+        /// <returns> string || The type name of the element, eg. in the case of Walls, the name of the wall type </returns>
+        /// <search> system families, type, name </search>
+        public static string ReturnSystemTypeName(Revit.Elements.Element element)
+        {
+            try
+            {
+                Autodesk.Revit.DB.Element apiElement = element.InternalElement;
+
+                return apiElement.Name;
             }
             catch (Exception e)
             {
