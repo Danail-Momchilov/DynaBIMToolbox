@@ -568,5 +568,56 @@ namespace Inspect
                 throw e;
             }
         }
+
+        public static string GetLinkedElementHostLevelName(Revit.Elements.Element element)
+        {
+            try
+            {
+                Document hostDocument = DocumentManager.Instance.CurrentDBDocument;
+
+                if (element == null)
+                    return "Element is null";
+
+                Autodesk.Revit.DB.Element apiElement = element.InternalElement;
+
+                if (apiElement == null)
+                    return "API Element is null";
+
+                // Use the Location property to get the element's location
+                Location location = apiElement.Location;
+
+                if (location == null)
+                    return "Location is null";
+                else
+                {
+                    if (location is LocationPoint locationPoint)
+                    {
+                        XYZ point = locationPoint.Point;
+
+                        // Use the point to determine the associated level
+                        FilteredElementCollector collector = new FilteredElementCollector(hostDocument).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType();
+
+                        foreach (Autodesk.Revit.DB.Level level in collector)
+                        {
+                            double levelElevation = level.Elevation;
+
+                            // Account for sill height if the element has a parameter named "Sill Height" (customize as needed)
+                            if (apiElement.get_Parameter(BuiltInParameter.INSTANCE_SILL_HEIGHT_PARAM) != null)
+                                levelElevation += apiElement.get_Parameter(BuiltInParameter.INSTANCE_SILL_HEIGHT_PARAM).AsDouble();
+
+                            // Use the tolerance (1 unit) to account for small differences
+                            if (Math.Abs(levelElevation - point.Z) <= 1.0)
+                                return level.Name;
+                        }
+                    }
+
+                    return "Location is not properly represented by a location point";
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
