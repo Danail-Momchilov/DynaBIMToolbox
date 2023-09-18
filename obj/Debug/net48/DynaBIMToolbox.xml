@@ -154,6 +154,33 @@
             <returns> string || The type name of the element, eg. in the case of Walls, the name of the wall type </returns>
             <search> system families, type, name </search>
         </member>
+        <member name="M:Inspect.ElementsData.GetLinkedElementHostLevelName(Revit.Elements.Element)">
+            <summary>
+            Works for both Doors and Windows, obtained from linked files, basically elements with a location represented by a location point and having a Sill Height parameter. 
+            The node gets the Z coordinate of the element, subtracts the Sill Height and check if the given height corresponds to a level in the host model. It applies a tolerance of a 1 cm. 
+            If such level is found, its name will be returned as an output
+            </summary>
+            <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
+            <returns> string || Level name </returns>
+            <search> linked, windows, doors, level </search>
+        </member>
+        <member name="M:Inspect.ElementsData.GetLinkedWallHostLevelName(Revit.Elements.Wall)">
+            <summary>
+            Works for Walls, obtained from linked files. The node gets the end point of the wall location curve, gets its Z component and check if the given height corresponds to a level in the host model. 
+            It applies a tolerance of a 1 cm. If such level is found, its name will be returned as an output
+            </summary>
+            <param name="wall"> Revit.Elements.Wall || Revit wall, wrapped through Dynamo </param>
+            <returns> string || Level name </returns>
+            <search> linked, walls, level </search>
+        </member>
+        <member name="M:Lists.AnyTrue(System.Collections.Generic.List{System.Boolean})">
+            <summary>
+            Checks if any of the bools in a given list is True
+            </summary>
+            <param name="list">  </param>
+            <returns> bool || True or False </returns>
+            <search> list, any, true </search>
+        </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.

@@ -8,6 +8,7 @@
 	<Nullable>disable</Nullable>
 	<LangVersion>8.0</LangVersion>
 	<OutputType>Library</OutputType>
+	<DocumentationFile>B:\06. BIM AUTOMATION\02. C#\DYNAMO ZERO TOUCH NODES\DynaBIMToolbox\DynaBIMToolbox\obj\Debug\net48\DynaBIMToolbox.xml</DocumentationFile>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

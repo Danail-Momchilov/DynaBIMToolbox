@@ -569,6 +569,14 @@ namespace Inspect
             }
         }
 
+        /// <summary>
+        /// Works for both Doors and Windows, obtained from linked files, basically elements with a location represented by a location point and having a Sill Height parameter. 
+        /// The node gets the Z coordinate of the element, subtracts the Sill Height and check if the given height corresponds to a level in the host model. It applies a tolerance of a 1 cm. 
+        /// If such level is found, its name will be returned as an output
+        /// </summary>
+        /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
+        /// <returns> string || Level name </returns>
+        /// <search> linked, windows, doors, level </search>
         public static string GetLinkedElementHostLevelName(Revit.Elements.Element element)
         {
             try
@@ -582,6 +590,10 @@ namespace Inspect
 
                 if (apiElement == null)
                     return "API Element is null";
+
+                // check if the element is either a Window or a Door
+                if (apiElement.Category.Id.IntegerValue != (int)BuiltInCategory.OST_Doors && apiElement.Category.Id.IntegerValue != (int)BuiltInCategory.OST_Windows)
+                    return "The element is neither a Door, nor a Window, please provide one of both";
 
                 // Use the Location property to get the element's location
                 Location location = apiElement.Location;
@@ -618,6 +630,88 @@ namespace Inspect
             {
                 throw e;
             }
+        }
+
+        /// <summary>
+        /// Works for Walls, obtained from linked files. The node gets the end point of the wall location curve, gets its Z component and check if the given height corresponds to a level in the host model. 
+        /// It applies a tolerance of a 1 cm. If such level is found, its name will be returned as an output
+        /// </summary>
+        /// <param name="wall"> Revit.Elements.Wall || Revit wall, wrapped through Dynamo </param>
+        /// <returns> string || Level name </returns>
+        /// <search> linked, walls, level </search>
+        public static string GetLinkedWallHostLevelName(Revit.Elements.Wall wall)
+        {
+            try
+            {
+                Document hostDocument = DocumentManager.Instance.CurrentDBDocument;
+
+                if (wall == null)
+                    return "The wall is null";
+
+                Autodesk.Revit.DB.Wall apiWall = (Autodesk.Revit.DB.Wall)wall.InternalElement;
+
+                if (apiWall == null)
+                    return "API Wall is null";
+
+                // check if the element is a Wall
+                if (apiWall.Category.Id.IntegerValue != (int)BuiltInCategory.OST_Walls)
+                    return "This node inly works for Walls. The element provided is not a Wall";
+
+                // Get the wall's location curve
+                LocationCurve wallLocation = apiWall.Location as LocationCurve;
+
+                if (wallLocation == null)
+                    return "Location is null";
+                else
+                {
+                    if (wallLocation is LocationCurve)
+                    {
+                        Autodesk.Revit.DB.Curve curve = wallLocation.Curve;
+                        XYZ endPt = curve.GetEndPoint(0);
+
+                        // Use the point to determine the associated level
+                        FilteredElementCollector collector = new FilteredElementCollector(hostDocument).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType();
+
+                        foreach (Autodesk.Revit.DB.Level level in collector)
+                        {
+                            double levelElevation = level.Elevation;
+
+                            // Use the tolerance (1 unit) to account for small differences
+                            if (Math.Abs(levelElevation - endPt.Z) <= 1.0)
+                                return level.Name;
+                        }
+                    }
+
+                    return "Location is not properly represented by a location curve";
+                }
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+    }
+}
+
+public class Lists
+{
+    private Lists() { }
+
+    /// <summary>
+    /// Checks if any of the bools in a given list is True
+    /// </summary>
+    /// <param name="list">  </param>
+    /// <returns> bool || True or False </returns>
+    /// <search> list, any, true </search>
+    public static bool AnyTrue(List<bool> list)
+    {
+        try
+        {
+            return list.Contains(true);
+        }
+        catch (Exception e)
+        {
+            throw e;
         }
     }
 }
