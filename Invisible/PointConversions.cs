@@ -14,10 +14,10 @@ namespace DynaBIMToolbox.Invisible
         public PointConversions() { }
 
         private static double Min(double a, double b)
-            { return a < b ? a : b; }
+        { return a < b ? a : b; }
 
         private static double Max(double a, double b)
-            { return a > b ? a : b; }
+        { return a > b ? a : b; }
 
         public static XYZ GetMinimumPoint(XYZ point1, XYZ point2)
         {

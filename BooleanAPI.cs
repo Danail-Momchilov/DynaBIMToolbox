@@ -27,6 +27,9 @@ using Autodesk.Revit.DB.Architecture;
 namespace GeometryAPI
 {
     // class : interpreted as a subcategory 
+    /// <summary>
+    /// Solids generation and handling, directly in the Revit API
+    /// </summary>
     public class SolidsAPI
     {
         // constructors : labelled as a create node in the subcategory (if private and empty it will not be displayed) : it is preferable to use the "By" keyword, when possible
@@ -290,6 +293,9 @@ namespace GeometryAPI
     }
 
     // class : interpreted as a subcategory
+    /// <summary>
+    /// Surfaces generation and handling, directly in the Revit API
+    /// </summary>
     public class SurfacesAPI
     {
         // constructors : labelled as a create node in the subcategory (if private and empty it will not be displayed) : it is preferable to use the "By" keyword, when possible
@@ -368,6 +374,9 @@ namespace GeometryAPI
         }
     }
 
+    /// <summary>
+    /// Boolean operations, directly in the Revit API
+    /// </summary>
     public class BooleanAPI
     {
         private BooleanAPI() { }
@@ -377,6 +386,9 @@ namespace GeometryAPI
         /// Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
         /// </summary>
         /// <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+        /// <param name="solids"> [Autodesk.Revit.DB.Solid] || List of Revit API Solids </param>
+        /// <param name="baseOffset"> Double || Base offset constraint </param>
+        /// <param name="height"> Double || Height </param>
         /// <returns> [Autodesk.Revit.DB.PlanarFace] || Revit Surfaces </returns>
         /// <search> room, surface, solid, API </search>
         [MultiReturn(new[] { "surfaceIntersections", "roomExceptions" })]
@@ -450,6 +462,9 @@ namespace GeometryAPI
         /// Gets a list of Rooms, as well as Revit API Solids. Constructs room finish faces, based on the input base offset and height and returns all the face intersections
         /// </summary>
         /// <param name="room"> Revit.Elements.Rooms || Room element, wrapped through Dynamo </param>
+        /// <param name="solids"> [Autodesk.Revit.DB.Solid] || A list of Revit API solids </param>
+        /// <param name="baseOffset"> Double || Base offset constraint </param>
+        /// <param name="height"> Double || Height parameter </param>
         /// <returns>
         /// <list type = "bullet">
         /// <item>
@@ -545,6 +560,9 @@ namespace GeometryAPI
 
 namespace Inspect
 {
+    /// <summary>
+    /// Retrieving and working with different elements' data
+    /// </summary>
     public class ElementsData
     {
         private ElementsData() { }
@@ -570,69 +588,6 @@ namespace Inspect
         }
 
         /// <summary>
-        /// Works for both Doors and Windows, obtained from linked files, basically elements with a location represented by a location point and having a Sill Height parameter. 
-        /// The node gets the Z coordinate of the element, subtracts the Sill Height and check if the given height corresponds to a level in the host model. It applies a tolerance of a 1 cm. 
-        /// If such level is found, its name will be returned as an output
-        /// </summary>
-        /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
-        /// <returns> string || Level name </returns>
-        /// <search> linked, windows, doors, level </search>
-        public static string GetLinkedElementHostLevelName(Revit.Elements.Element element)
-        {
-            try
-            {
-                Document hostDocument = DocumentManager.Instance.CurrentDBDocument;
-
-                if (element == null)
-                    return "Element is null";
-
-                Autodesk.Revit.DB.Element apiElement = element.InternalElement;
-
-                if (apiElement == null)
-                    return "API Element is null";
-
-                // check if the element is either a Window or a Door
-                if (apiElement.Category.Id.IntegerValue != (int)BuiltInCategory.OST_Doors && apiElement.Category.Id.IntegerValue != (int)BuiltInCategory.OST_Windows)
-                    return "The element is neither a Door, nor a Window, please provide one of both";
-
-                // Use the Location property to get the element's location
-                Location location = apiElement.Location;
-
-                if (location == null)
-                    return "Location is null";
-                else
-                {
-                    if (location is LocationPoint locationPoint)
-                    {
-                        XYZ point = locationPoint.Point;
-
-                        // Use the point to determine the associated level
-                        FilteredElementCollector collector = new FilteredElementCollector(hostDocument).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType();
-
-                        foreach (Autodesk.Revit.DB.Level level in collector)
-                        {
-                            double levelElevation = level.Elevation;
-
-                            // Account for sill height if the element has a parameter named "Sill Height" (customize as needed)
-                            if (apiElement.get_Parameter(BuiltInParameter.INSTANCE_SILL_HEIGHT_PARAM) != null)
-                                levelElevation += apiElement.get_Parameter(BuiltInParameter.INSTANCE_SILL_HEIGHT_PARAM).AsDouble();
-
-                            // Use the tolerance (1 unit) to account for small differences
-                            if (Math.Abs(levelElevation - point.Z) <= 1.0)
-                                return level.Name;
-                        }
-                    }
-
-                    return "Location is not properly represented by a location point";
-                }
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
-        /// <summary>
         /// Works for Walls, obtained from linked files. The node gets the end point of the wall location curve, gets its Z component and check if the given height corresponds to a level in the host model. 
         /// It applies a tolerance of a 1 cm. If such level is found, its name will be returned as an output
         /// </summary>
@@ -643,15 +598,14 @@ namespace Inspect
         {
             try
             {
+                // get the current document, the API element and all levels in the model
                 Document hostDocument = DocumentManager.Instance.CurrentDBDocument;
-
-                if (wall == null)
-                    return "The wall is null";
-
                 Autodesk.Revit.DB.Wall apiWall = (Autodesk.Revit.DB.Wall)wall.InternalElement;
+                FilteredElementCollector levels = new FilteredElementCollector(hostDocument).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType();
 
-                if (apiWall == null)
-                    return "API Wall is null";
+                // check if element is null
+                if (wall == null || apiWall == null)
+                    return "Either the wall or its API representation is null";
 
                 // check if the element is a Wall
                 if (apiWall.Category.Id.IntegerValue != (int)BuiltInCategory.OST_Walls)
@@ -660,30 +614,169 @@ namespace Inspect
                 // Get the wall's location curve
                 LocationCurve wallLocation = apiWall.Location as LocationCurve;
 
-                if (wallLocation == null)
-                    return "Location is null";
+                Autodesk.Revit.DB.Curve curve = wallLocation.Curve;
+                double endPtHeight = Math.Round(curve.GetEndPoint(0).Z * 30.48);
+
+                // Use the point to determine the associated level
+                foreach (Autodesk.Revit.DB.Level level in levels)
+                    if (Math.Round(level.Elevation * 30.48) - endPtHeight <= 1 && Math.Round(level.Elevation * 30.48) - endPtHeight >= -1)
+                        return level.Name;
+
+                return "Could not find corresponding level for the specified wall";
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Returns the host model elevation for the specified linked wall. The elevation is measured as the distance between the wall base curve's endpoint and the Project Base Point
+        /// </summary>
+        /// <param name="wall"> Revit.Elements.Wall || Revit wall, wrapped through Dynamo </param>
+        /// <returns> double || Height elevation </returns>
+        /// <search> linked, wall, elevation </search>
+        public static double GetLinkedWallHostElevation(Revit.Elements.Wall wall)
+        {
+            try
+            {
+                LocationCurve wallLocation = wall.InternalElement.Location as LocationCurve;
+
+                return Math.Round(wallLocation.Curve.GetEndPoint(0).Z * 30.48);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// This node would check if any of the specified parameters is available in the element, either as type or instance.
+        /// It returns their value in the order they were specified - if a value is found for the first parameter, it will be returned. If not, it will proceed to the second one.
+        /// If no value is found for both, it will return null
+        /// </summary>
+        /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
+        /// <param name="parameterName1"> String || Parameter name </param>
+        /// <param name="parameterName2"> String || Parameter name </param>
+        /// <returns> Object || Parameter value </returns>
+        /// <search> type, instance, parameter, either one </search>
+        public static object EitherOneOfTwoParametersTypeInstance(Revit.Elements.Element element, string parameterName1, string parameterName2)
+        {
+            try
+            {
+                Autodesk.Revit.DB.Element apiElement = element.InternalElement;
+                Document doc = apiElement.Document;
+
+                ElementId typeId = apiElement.GetTypeId();
+                Autodesk.Revit.DB.Element elemType = doc.GetElement(typeId);
+
+                if (apiElement.LookupParameter(parameterName1) != null)
+                    return element.GetParameterValueByName(parameterName1);
+                else if (ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName1) != null)
+                    return ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName1);
+
+                else if (apiElement.LookupParameter(parameterName2) != null)
+                    return element.GetParameterValueByName(parameterName2);
+                else if (ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName2) != null)
+                    return ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName2);
+
                 else
-                {
-                    if (wallLocation is LocationCurve)
-                    {
-                        Autodesk.Revit.DB.Curve curve = wallLocation.Curve;
-                        XYZ endPt = curve.GetEndPoint(0);
+                    return null;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
-                        // Use the point to determine the associated level
-                        FilteredElementCollector collector = new FilteredElementCollector(hostDocument).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType();
+        /// <summary>
+        /// Returns the elevation for each specified level. Typically the distance to the Internal Origin 
+        /// </summary>
+        /// <param name="level"> Revit.Elements.Level || Revit level, wrapped through Dynamo </param>
+        /// <returns> double || Level elevation </returns>
+        /// <search> level, elevation </search>
+        public static double LevelElevation(Revit.Elements.Level level)
+        {
+            try
+            {
+                Autodesk.Revit.DB.Level apiLevel = level.InternalElement as Autodesk.Revit.DB.Level;
+                return Math.Round(apiLevel.Elevation*30.48);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
-                        foreach (Autodesk.Revit.DB.Level level in collector)
-                        {
-                            double levelElevation = level.Elevation;
+        /// <summary>
+        /// Returns the elevation for each family instance, typically the distance to the Project Base Point. 
+        /// Works for families with origin, represented by a location point, such as Wall, Doors and other family instances.
+        /// Note: The end result is rounded
+        /// </summary>
+        /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
+        /// <returns> double || Z elevation </returns>
+        /// <search> linked, familyinstance, family instance, elevation </search>
+        public static double LinkedFamilyInstanceElevation(Revit.Elements.Element element)
+        {
+            try
+            {
+                return Math.Round((element.InternalElement.Location as LocationPoint).Point.Z*30.48);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
 
-                            // Use the tolerance (1 unit) to account for small differences
-                            if (Math.Abs(levelElevation - endPt.Z) <= 1.0)
-                                return level.Name;
-                        }
-                    }
+        /// <summary>
+        /// Returns the name of the host model level for a Door or Window in a linked file. The level is calculated, based on the Family Instance location.
+        /// Sill Height is subtracted from the elevation. The node uses a tolerance of 1 cm. 
+        /// </summary>
+        /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
+        /// <returns> double || Z elevation </returns>
+        /// <search> linked, familyinstance, family instance, elevation </search>
+        public static string LinkedDoorWindowHostLevelName(Revit.Elements.Element element)
+        {
+            try
+            {
+                // get the current document
+                Document hostDocument = DocumentManager.Instance.CurrentDBDocument;
+                FilteredElementCollector levels = new FilteredElementCollector(hostDocument).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType();
 
-                    return "Location is not properly represented by a location curve";
-                }
+                // get element's elevation in the host model
+                double elementElevation = Math.Round((element.InternalElement.Location as LocationPoint).Point.Z * 30.48) - Math.Round(element.InternalElement.LookupParameter("Sill Height").AsDouble()*30.48);
+
+                foreach (Autodesk.Revit.DB.Level level in levels)
+                    if ((level.Elevation*30.48 - elementElevation <= 1) || (level.Elevation * 30.48 - elementElevation >= -1))
+                        return level.Name;
+
+                return "Could not find corresponding level for the specified Family Instance";
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Returns the elevation of a family instance from the host model. Works for elements with Location Point, such as Doors, Windows, etc. 
+        /// Returns the elevation as the distance to Project Base Point.
+        /// </summary>
+        /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
+        /// <returns> double || Z elevation </returns>
+        /// <search> linked, familyinstance, family instance, elevation </search>
+        public static double HostFamilyInstanceElevation(Revit.Elements.Element element)
+        {
+            try
+            {
+                // calculate element's Z coordinate as a vertical distance to the internal origin
+                double instanceZ = Math.Round((element.InternalElement.Location as LocationPoint).Point.Z * 30.48);
+
+                // calculate Base Point Elevation
+                Document doc = DocumentManager.Instance.CurrentDBDocument;
+                double BasePtZ = BasePoint.GetProjectBasePoint(doc).Position.Z*30.48;
+
+                return instanceZ - BasePtZ;
             }
             catch (Exception e)
             {
@@ -691,27 +784,45 @@ namespace Inspect
             }
         }
     }
-}
-
-public class Lists
-{
-    private Lists() { }
 
     /// <summary>
-    /// Checks if any of the bools in a given list is True
+    /// Collection of nodes for list operations
     /// </summary>
-    /// <param name="list">  </param>
-    /// <returns> bool || True or False </returns>
-    /// <search> list, any, true </search>
-    public static bool AnyTrue(List<bool> list)
+    public class Lists
     {
-        try
+        private Lists() { }
+
+        /// <summary>
+        /// Checks if any of the bools in a given list is True
+        /// </summary>
+        /// <param name="list">  </param>
+        /// <returns> bool || True or False </returns>
+        /// <search> list, any, true </search>
+        public static bool AnyTrue(List<bool> list)
         {
-            return list.Contains(true);
+            try
+            {
+                return list.Contains(true);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
-        catch (Exception e)
+
+        public static List<Revit.Elements.Element> returnListIfNot(object input)
         {
-            throw e;
+            try
+            {
+                if (input is List<Revit.Elements.Element>)
+                    return input as List<Revit.Elements.Element>;
+                else
+                    return new List<Revit.Elements.Element> { (Revit.Elements.Element)input };
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
         }
     }
 }
