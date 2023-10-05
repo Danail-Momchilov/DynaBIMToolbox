@@ -670,18 +670,30 @@ namespace Inspect
                 ElementId typeId = apiElement.GetTypeId();
                 Autodesk.Revit.DB.Element elemType = doc.GetElement(typeId);
 
-                if (apiElement.LookupParameter(parameterName1) != null)
+                if (element.GetParameterValueByName(parameterName1) != "")
                     return element.GetParameterValueByName(parameterName1);
-                else if (ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName1) != null)
+                else if (ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName1) != "")
                     return ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName1);
 
-                else if (apiElement.LookupParameter(parameterName2) != null)
+                else if (element.GetParameterValueByName(parameterName2) != "")
                     return element.GetParameterValueByName(parameterName2);
                 else if (ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName2) != null)
                     return ElementWrapper.ToDSType(elemType, true).GetParameterValueByName(parameterName2);
 
                 else
                     return null;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static object test(Revit.Elements.Element element, string parameterName)
+        {
+            try
+            {
+                return element.GetParameterValueByName(parameterName);
             }
             catch (Exception e)
             {
@@ -747,7 +759,7 @@ namespace Inspect
                 double elementElevation = Math.Round((element.InternalElement.Location as LocationPoint).Point.Z * 30.48) - Math.Round(element.InternalElement.LookupParameter("Sill Height").AsDouble()*30.48);
 
                 foreach (Autodesk.Revit.DB.Level level in levels)
-                    if ((level.Elevation*30.48 - elementElevation <= 1) || (level.Elevation * 30.48 - elementElevation >= -1))
+                    if ((level.Elevation*30.48 - elementElevation <= 1) && (level.Elevation * 30.48 - elementElevation >= -1))
                         return level.Name;
 
                 return "Could not find corresponding level for the specified Family Instance";
@@ -810,14 +822,15 @@ namespace Inspect
             }
         }
 
-        public static List<Revit.Elements.Element> returnListIfNot(object input)
+        public static bool IsAnyStringEqual(string A, List<string> B)
         {
             try
             {
-                if (input is List<Revit.Elements.Element>)
-                    return input as List<Revit.Elements.Element>;
-                else
-                    return new List<Revit.Elements.Element> { (Revit.Elements.Element)input };
+                foreach (string s in B)
+                    if (A.Equals(s))
+                        return true;
+
+                return false;
             }
             catch (Exception e)
             {
