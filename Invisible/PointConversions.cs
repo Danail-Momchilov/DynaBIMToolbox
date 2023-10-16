@@ -34,5 +34,24 @@ namespace DynaBIMToolbox.Invisible
             double z = Max(point1.Z, point2.Z);
             return new XYZ(x, y, z);
         }
+
+        public static XYZ TransformPoint(XYZ point, Transform transform)
+        {
+            double x = point.X;
+            double y = point.Y;
+            double z = point.Z;
+
+            XYZ b0 = transform.get_Basis(0);
+            XYZ b1 = transform.get_Basis(1);
+            XYZ b2 = transform.get_Basis(2);
+
+            XYZ origin = transform.Origin;
+
+            double newX = x*b0.X + y*b1.X + z*b2.X + origin.X;
+            double newY = x*b0.Y + y*b1.Y + z*b2.Y + origin.Y;
+            double newZ = x*b0.Z + y*b1.Z + z*b2.Z + origin.Z;
+
+            return new XYZ(newX, newY, newZ);
+        }
     }
 }

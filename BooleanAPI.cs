@@ -496,8 +496,9 @@ namespace GeometryAPI
 
                 List<Autodesk.Revit.DB.Curve> roomCurves = new List<Autodesk.Revit.DB.Curve>();
 
-                foreach (BoundarySegment segment in revitRoom.GetBoundarySegments(options)[0])
-                    roomCurves.Add(segment.GetCurve());
+                foreach (List<BoundarySegment> segmentLoops in revitRoom.GetBoundarySegments(options))
+                    foreach (BoundarySegment segment in segmentLoops)
+                        roomCurves.Add(segment.GetCurve());
 
                 // generate thin solids for each room wall surface
                 List<Autodesk.Revit.DB.Solid> roomWallFaceSolids = new List<Autodesk.Revit.DB.Solid>();
@@ -522,12 +523,25 @@ namespace GeometryAPI
                     {
                         try
                         {
+                            // check if the room's bounding box collides with the one of the solid before intersecting the solids themselves
+                            // should make the process less time consuming...
+                            if (SolidConversions.DoBoundingBoxesIntersect(revitRoom.get_BoundingBox(null), revitRoom.get_BoundingBox(null).Transform, solid.GetBoundingBox(), solid.GetBoundingBox().Transform ))
+                            {
+                                // create intersectoin
+                                Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, solid, BooleanOperationsType.Intersect);
+
+                                // extract the single largest vertical face of each intersection and add its area to the total sum
+                                if (intersection != null && intersection.Volume != 0)
+                                    roomIntersectionAreas += (SurfaceConversions.largestVerticalFace(intersection.Faces).Area) / 10.7639;
+                            }
+                            /*
                             // create intersectoin
                             Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, solid, BooleanOperationsType.Intersect);
 
                             // extract the single largest vertical face of each intersection and add its area to the total sum
                             if (intersection != null && intersection.Volume != 0)
                                 roomIntersectionAreas += (SurfaceConversions.largestVerticalFace(intersection.Faces).Area) / 10.7639;
+                            */
                         }
                         catch
                         {
@@ -689,18 +703,6 @@ namespace Inspect
             }
         }
 
-        public static object test(Revit.Elements.Element element, string parameterName)
-        {
-            try
-            {
-                return element.GetParameterValueByName(parameterName);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
         /// <summary>
         /// Returns the elevation for each specified level. Typically the distance to the Internal Origin 
         /// </summary>
@@ -756,7 +758,12 @@ namespace Inspect
                 FilteredElementCollector levels = new FilteredElementCollector(hostDocument).OfCategory(BuiltInCategory.OST_Levels).WhereElementIsNotElementType();
 
                 // get element's elevation in the host model
-                double elementElevation = Math.Round((element.InternalElement.Location as LocationPoint).Point.Z * 30.48) - Math.Round(element.InternalElement.LookupParameter("Sill Height").AsDouble()*30.48);
+                double elementElevation;
+
+                if (element.InternalElement.Location != null)
+                    elementElevation = Math.Round((element.InternalElement.Location as LocationPoint).Point.Z * 30.48) - Math.Round(element.InternalElement.LookupParameter("Sill Height").AsDouble() * 30.48);
+                else
+                    return "There was an issue obtaining the element's Location";
 
                 foreach (Autodesk.Revit.DB.Level level in levels)
                     if ((level.Elevation*30.48 - elementElevation <= 1) && (level.Elevation * 30.48 - elementElevation >= -1))
@@ -795,6 +802,108 @@ namespace Inspect
                 throw e;
             }
         }
+
+        public static double FamilyInstanceRotationAngle(Revit.Elements.Element element)
+        {
+            try
+            {
+                Autodesk.Revit.DB.FamilyInstance familyInstance = element.InternalElement as Autodesk.Revit.DB.FamilyInstance;
+
+                XYZ orientation = familyInstance.FacingOrientation;
+                XYZ xAxis = new XYZ(0.03280, 0, 0);
+                XYZ zAxis = new XYZ(0, 0, 0.03280);
+
+                return orientation.AngleOnPlaneTo(xAxis, zAxis);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        [MultiReturn(new[] { "doesBelongToPhase", "exceptions" })]
+        public static Dictionary<string, object> IsElementInControlPhase(List<string> phasesOrdered, string controlPhase, Revit.Elements.Element element)
+        {
+            try
+            {
+                Dictionary<string, object> result = new Dictionary<string, object>();
+
+                // get the element's phase created and phase demolished names
+                Document elementDocument = element.InternalElement.Document;
+
+                ElementId elementPhaseCreatedId = element.InternalElement.CreatedPhaseId;
+                string phaseCreatedName = elementDocument.GetElement(elementPhaseCreatedId).Name;
+
+                ElementId elementPhaseDemolishedId = element.InternalElement.DemolishedPhaseId;
+                string phaseDemolishedName = "";
+                if (elementDocument.GetElement(elementPhaseDemolishedId) != null)
+                    phaseDemolishedName = elementDocument.GetElement(elementPhaseDemolishedId).Name;
+
+                // get the index of PhaseCreated and PhaseDemolished from the given list of phases
+                int phaseCreatedIndex = phasesOrdered.IndexOf(phaseCreatedName);
+
+                int phaseDemolishedIndex;
+
+                if (phaseDemolishedName == "")
+                    phaseDemolishedIndex = -1;
+                else
+                    phaseDemolishedIndex = phasesOrdered.IndexOf(phaseDemolishedName);
+
+                // check phases order and return results
+                if (phaseCreatedIndex == -1)
+                {
+                    result.Add("doesBelongToPhase", null);
+                    result.Add("exceptions", "Rooms's Phase not found in the list. The room's document likely contains different phases than the host one");
+                    return result;
+                }
+                else
+                {
+                    int controlPhaseIndex = phasesOrdered.IndexOf(controlPhase);
+
+                    if ((phaseCreatedIndex <= controlPhaseIndex && phaseDemolishedIndex == -1) || (phaseCreatedIndex <= controlPhaseIndex && phaseDemolishedIndex > controlPhaseIndex))
+                    {
+                        result.Add("doesBelongToPhase", true);
+                        result.Add("exceptions", "Everything seems to be fine");
+                        return result;
+                    }
+                    else
+                    {
+                        result.Add("doesBelongToPhase", false);
+                        result.Add("exceptions", "Everything seems to be fine");
+                        return result;
+                    }
+                }
+
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static string PhaseName(Revit.Elements.Element phase)
+        {
+            try
+            {
+                return phase.InternalElement.Name;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static BoundingBox RoomBoundingBox(Revit.Elements.Room room)
+        {
+            try
+            {
+                return room.InternalElement.get_BoundingBox(null).ToProtoType();
+            }
+            catch(Exception e)
+            {
+                throw e;
+            }
+        }
     }
 
     /// <summary>
@@ -822,15 +931,72 @@ namespace Inspect
             }
         }
 
-        public static bool IsAnyStringEqual(string A, List<string> B)
+        public static List<object> ActuallyWorkingListClean(List<object> inputList)
         {
             try
             {
-                foreach (string s in B)
-                    if (A.Equals(s))
-                        return true;
+                List<object> outputList = new List<object>();
 
-                return false;
+                foreach (object obj in inputList)
+                    if (obj != null)
+                        outputList.Add(obj);
+
+                return outputList;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static object ReplaceWithIf(object item, object isEqualTo, object changeWith)
+        {
+            try
+            {
+                if (item == isEqualTo)
+                    return changeWith;
+                else
+                    return item;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+    }
+
+    public class DocumentData
+    {
+        private DocumentData() { }
+
+        public static List<string> GetPhasesInChronologicalOrder()
+        {
+            try
+            {
+                Document doc = DocumentManager.Instance.CurrentDBDocument;
+                List<string> phaseNames = new List<string>();
+
+                FilteredElementCollector collector = new FilteredElementCollector(doc).OfCategory(BuiltInCategory.OST_Phases);
+                List<Phase> phases = new List<Phase>();
+
+                foreach (Phase phaseElement in collector)
+                {
+                    if (phaseElement != null)
+                    {
+                        phases.Add(phaseElement);
+                    }
+                }
+
+                // Sort phases by sequence number
+                phases.Sort((x, y) => x.get_Parameter(BuiltInParameter.PHASE_SEQUENCE_NUMBER).AsInteger() - y.get_Parameter(BuiltInParameter.PHASE_SEQUENCE_NUMBER).AsInteger());
+
+                // Get phase names in chronological order
+                foreach (Phase phase in phases)
+                {
+                    phaseNames.Add(phase.Name);
+                }
+
+                return phaseNames;
             }
             catch (Exception e)
             {

@@ -293,5 +293,24 @@ namespace DynaBIMToolbox.Invisible
 
             return edges;
         }
+
+        public static bool DoBoundingBoxesIntersect(BoundingBoxXYZ A, Transform transformA, BoundingBoxXYZ B, Transform transformB)
+        {
+            try
+            {
+                XYZ aMaxTransformed = PointConversions.TransformPoint(A.Max, transformA);
+                XYZ aMinTransformed = PointConversions.TransformPoint(A.Min, transformA);
+
+                XYZ bMaxTransformed = PointConversions.TransformPoint(B.Max, transformB);
+                XYZ bMinTransformed = PointConversions.TransformPoint(B.Min, transformB);
+
+                return ((aMaxTransformed.X >= bMinTransformed.X && aMinTransformed.X <= bMaxTransformed.X) && (aMaxTransformed.Y >= bMinTransformed.Y 
+                    && aMinTransformed.Y <= bMaxTransformed.Y) && (aMaxTransformed.Z >= bMinTransformed.Z && aMinTransformed.Z <= bMaxTransformed.Z));
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 }
