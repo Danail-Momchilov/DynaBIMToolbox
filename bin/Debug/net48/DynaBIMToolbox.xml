@@ -243,7 +243,43 @@
             </summary>
             <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
             <returns> double || Z elevation </returns>
-            <search> linked, familyinstance, family instance, elevation </search>
+            <search> familyinstance, family instance, elevation </search>
+        </member>
+        <member name="M:Inspect.ElementsData.IsElementInControlPhase(System.Collections.Generic.List{System.String},System.String,Revit.Elements.Element)">
+            <summary>
+            Determines whether or not an element could be applied to the control phase. If an element was created in an earlier phase, 
+            than the one specified and was either not demolished or demolished in a later phase, the node returns True. Otherwise, it returns False
+            </summary>
+            <param name="phasesOrdered"> [string] || List with phase names, sorted in a chronological order </param>
+            <param name="controlPhase"> string || Name of the control phase </param>
+            <param name="element"> [Revit.Elements.Element] || list with Revit elements, wrapped through Dynamo </param>
+            <returns>
+            <list type = "bullet">
+            <item>
+            <description> True or False </description>
+            </item>
+            <item>
+            <description> If any exceptions were found, they will be displayed here </description>
+            </item>
+            </list>
+            </returns>
+            <search> phase, control phase, element, does belong to phase </search>
+        </member>
+        <member name="M:Inspect.ElementsData.PhaseName(Revit.Elements.Element)">
+            <summary>
+            Returns the name of the specified phase
+            </summary>
+            <param name="phase"> Revit.Elements.Phase | Revit phase, wrapped through Dynamo </param>
+            <returns> string | The name of the phase as string </returns>
+            <search> phase, phase name, name </search>
+        </member>
+        <member name="M:Inspect.ElementsData.RoomBoundingBox(Revit.Elements.Room)">
+            <summary>
+            Returns the bounding box for the specified room. It will be oriented in accordance with Project North
+            </summary>
+            <param name="room"> </param>
+            <returns> Autodesk.DesignScript.Geometry.BoundingBox | Dynamo Bounding Box </returns>
+            <search> room, bounding box </search>>
         </member>
         <member name="T:Inspect.Lists">
             <summary>
@@ -257,6 +293,36 @@
             <param name="list">  </param>
             <returns> bool || True or False </returns>
             <search> list, any, true </search>
+        </member>
+        <member name="M:Inspect.Lists.ActuallyWorkingListClean(System.Collections.Generic.List{System.Object})">
+            <summary>
+            A List.Clean node, that actually works... unlike the OOTB. Removes null values from the input list
+            </summary>
+            <param name="inputList"> [object] | List of elements </param>
+            <returns> [clean list] | The input list, properly cleaned </returns>
+            <search> list, clean, clean list, list.clean </search>>
+        </member>
+        <member name="M:Inspect.Lists.ReplaceWithIf(System.Object,System.Object,System.Object)">
+            <summary>
+            If an item (either an individual or a one in a list) is equal to the specified value, it will be replaced
+            </summary>
+            <param name="item"> object | Could be either an individual item or a list of items </param>
+            <param name="isEqualTo"> object | The value to search for. Could be any type of variable </param>
+            <param name="changeWith"> object | The value to replace with. Could be any type of variable </param>
+            <returns> object | Replaced value </returns>
+            <search> replace with, replace if, replace, find </search>>
+        </member>
+        <member name="T:Inspect.DocumentData">
+            <summary>
+            Retrieving information from either linked or current document
+            </summary>
+        </member>
+        <member name="M:Inspect.DocumentData.GetPhasesInChronologicalOrder">
+            <summary>
+            Returns all phases of the active document, ordered chronologically. Result is return as a list of strings
+            </summary>
+            <returns> [string] | List of phase names, ordered chronologically </returns>
+            <search> phases, get phases, getphases, pahses chronological, chronological </search>>
         </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>

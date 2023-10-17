@@ -4,7 +4,7 @@ using System.Collections.Generic;
 // load Runtime module in order to use the MultiReturn attribute : more info on multiple return values in the Dynamo Primer
 using Autodesk.DesignScript.Runtime;
 
-// load Revit api
+// load Revit API
 using Autodesk.Revit.DB;
 using Autodesk.Revit.UI;
 
@@ -20,8 +20,6 @@ using System.Security.Cryptography;
 using System.Linq;
 using Autodesk.Revit.DB.Architecture;
 
-
-// TO DO! Research NodeModel nodes with custom UI
 
 // namespace : interpreted as a main category in the package
 namespace GeometryAPI
@@ -783,7 +781,7 @@ namespace Inspect
         /// </summary>
         /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
         /// <returns> double || Z elevation </returns>
-        /// <search> linked, familyinstance, family instance, elevation </search>
+        /// <search> familyinstance, family instance, elevation </search>
         public static double HostFamilyInstanceElevation(Revit.Elements.Element element)
         {
             try
@@ -803,24 +801,24 @@ namespace Inspect
             }
         }
 
-        public static double FamilyInstanceRotationAngle(Revit.Elements.Element element)
-        {
-            try
-            {
-                Autodesk.Revit.DB.FamilyInstance familyInstance = element.InternalElement as Autodesk.Revit.DB.FamilyInstance;
-
-                XYZ orientation = familyInstance.FacingOrientation;
-                XYZ xAxis = new XYZ(0.03280, 0, 0);
-                XYZ zAxis = new XYZ(0, 0, 0.03280);
-
-                return orientation.AngleOnPlaneTo(xAxis, zAxis);
-            }
-            catch (Exception e)
-            {
-                throw e;
-            }
-        }
-
+        /// <summary>
+        /// Determines whether or not an element could be applied to the control phase. If an element was created in an earlier phase, 
+        /// than the one specified and was either not demolished or demolished in a later phase, the node returns True. Otherwise, it returns False
+        /// </summary>
+        /// <param name="phasesOrdered"> [string] || List with phase names, sorted in a chronological order </param>
+        /// <param name="controlPhase"> string || Name of the control phase </param>
+        /// <param name="element"> [Revit.Elements.Element] || list with Revit elements, wrapped through Dynamo </param>
+        /// <returns>
+        /// <list type = "bullet">
+        /// <item>
+        /// <description> True or False </description>
+        /// </item>
+        /// <item>
+        /// <description> If any exceptions were found, they will be displayed here </description>
+        /// </item>
+        /// </list>
+        /// </returns>
+        /// <search> phase, control phase, element, does belong to phase </search>
         [MultiReturn(new[] { "doesBelongToPhase", "exceptions" })]
         public static Dictionary<string, object> IsElementInControlPhase(List<string> phasesOrdered, string controlPhase, Revit.Elements.Element element)
         {
@@ -881,6 +879,12 @@ namespace Inspect
             }
         }
 
+        /// <summary>
+        /// Returns the name of the specified phase
+        /// </summary>
+        /// <param name="phase"> Revit.Elements.Phase | Revit phase, wrapped through Dynamo </param>
+        /// <returns> string | The name of the phase as string </returns>
+        /// <search> phase, phase name, name </search>
         public static string PhaseName(Revit.Elements.Element phase)
         {
             try
@@ -893,11 +897,17 @@ namespace Inspect
             }
         }
 
+        /// <summary>
+        /// Returns the bounding box for the specified room. It will be oriented in accordance with Project North
+        /// </summary>
+        /// <param name="room"> </param>
+        /// <returns> Autodesk.DesignScript.Geometry.BoundingBox | Dynamo Bounding Box </returns>
+        /// <search> room, bounding box </search>>
         public static BoundingBox RoomBoundingBox(Revit.Elements.Room room)
         {
             try
             {
-                return room.InternalElement.get_BoundingBox(null).ToProtoType();
+                return room.BoundingBox;
             }
             catch(Exception e)
             {
@@ -931,6 +941,12 @@ namespace Inspect
             }
         }
 
+        /// <summary>
+        /// A List.Clean node, that actually works... unlike the OOTB. Removes null values from the input list
+        /// </summary>
+        /// <param name="inputList"> [object] | List of elements </param>
+        /// <returns> [clean list] | The input list, properly cleaned </returns>
+        /// <search> list, clean, clean list, list.clean </search>>
         public static List<object> ActuallyWorkingListClean(List<object> inputList)
         {
             try
@@ -949,6 +965,14 @@ namespace Inspect
             }
         }
 
+        /// <summary>
+        /// If an item (either an individual or a one in a list) is equal to the specified value, it will be replaced
+        /// </summary>
+        /// <param name="item"> object | Could be either an individual item or a list of items </param>
+        /// <param name="isEqualTo"> object | The value to search for. Could be any type of variable </param>
+        /// <param name="changeWith"> object | The value to replace with. Could be any type of variable </param>
+        /// <returns> object | Replaced value </returns>
+        /// <search> replace with, replace if, replace, find </search>>
         public static object ReplaceWithIf(object item, object isEqualTo, object changeWith)
         {
             try
@@ -965,10 +989,18 @@ namespace Inspect
         }
     }
 
+    /// <summary>
+    /// Retrieving information from either linked or current document
+    /// </summary>
     public class DocumentData
     {
         private DocumentData() { }
 
+        /// <summary>
+        /// Returns all phases of the active document, ordered chronologically. Result is return as a list of strings
+        /// </summary>
+        /// <returns> [string] | List of phase names, ordered chronologically </returns>
+        /// <search> phases, get phases, getphases, pahses chronological, chronological </search>>
         public static List<string> GetPhasesInChronologicalOrder()
         {
             try
