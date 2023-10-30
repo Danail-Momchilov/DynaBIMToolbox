@@ -74,3 +74,58 @@ Consists of 3 subcategories - DocumentData, ElementsData, Lists
 > Determines whether or not an element could be applied to the control phase. If an element was created in an earlier phase, than the one specified and was either not demolished or demolished in a later phase, the node returns True. Otherwise, it returns False
 
 ![IsElementInControlPhase](/images/IsElementInControlPhase01.png)
+
+> ElementData -> EitherOneOfTwoParametersTypeInstance
+> This node would check if any of the specified parameters is available in the element, either as type or instance. 
+> It returns their value in the order they were specified - if a value is found for the first parameter, it will be returned. 
+> If not, it will proceed to the second one. If no value is found for both, it will return null
+
+![EitherOneOfTwoParametersTypeInstance](/images/EitherOneOfTwoParametersTypeInstance01.png)
+
+> ElementsData -> GetLinkedWallHostElevation
+> Returns the host model elevation for the specified linked wall. The elevation is measured as the distance between the wall base curve's endpoint and the Project Base Point
+
+> ElementsData -> GetLinkedWallHostLevelName
+> Works for Walls, obtained from linked files. The node gets the end point of the wall location curve, gets its Z component and check if the given height corresponds to a level in the host model. 
+> It applies a tolerance of a 1 cm. If such level is found, its name will be returned as an output
+
+![GetLinkedWallHostLevelName](/images/GetLinkedWallHostLevelName01.png)
+
+> ElementsData -> HostFamilyInstanceElevation
+> Returns the elevation of a family instance from the host model. Works for elements with Location Point, such as Doors, Windows, etc. 
+> Returns the elevation as the distance to Project Base Point
+
+> ElementsData -> levelElevation
+> Returns the elevation for each specified level. Typically the distance to the Internal Origin 
+
+> ElementsData -> LinkedDoorWindowHostLevelName
+> Returns the name of the host model level for a Door or Window in a linked file. The level is calculated, based on the Family Instance location.
+> Sill Height is subtracted from the elevation. The node uses a tolerance of 1 cm
+
+![LinkedDoorWindowHostLevelName](/images/LinkedDoorWindowHostLevelName01.png)
+
+> ElementsData -> PhaseName
+> Returns the name of the specified phase
+
+> ElementsData -> ReturnSystemTypeName
+> Gets an element, belonging to a system family, e.g. Waals, Roofs, Floors, Ceilings. Works for both linked elements as well as elements in the host model
+
+![ReturnSystemTypeName](/images/ReturnSystemTypeName01.png)
+
+> ElementsData -> RoomBoundingBox
+> Returns the bounding box for the specified room. It will be oriented in accordance with Project North
+
+
+# Lists Category
+No subcategories yet
+
+> Lists -> ActuallyWorkingListClean
+> Just as the name suggests: a List.Clean node, that actually works... Removes null values from the input list
+
+> Lists -> AnyTrue
+> Checks if any of the bools in a given list is True
+
+> Lists -> ReplaceWithIf
+> If an item (either an individual or a one in a list) is equal to the specified value, it will be replaced
+
+![ReplaceWithIf](/images/ReplaceWithIf01.png)

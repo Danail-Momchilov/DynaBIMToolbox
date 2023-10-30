@@ -580,7 +580,7 @@ namespace Inspect
         private ElementsData() { }
 
         /// <summary>
-        /// Gets an element, belonging to a system family, e.g. Waals, Roofs, Floors, Ceilings. Works for both linked elements and well as elements in the host model
+        /// Gets an element, belonging to a system family, e.g. Waals, Roofs, Floors, Ceilings. Works for both linked elements as well as elements in the host model
         /// </summary>
         /// <param name="element"> Revit.Elements.Element || Revit element, wrapped through Dynamo </param>
         /// <returns> string || The type name of the element, eg. in the case of Walls, the name of the wall type </returns>
