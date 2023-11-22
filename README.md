@@ -20,6 +20,7 @@ Consists of 3 subcategories - BooleanAPI, SolidsAPI and SurfacesAPI
 
 ![ElementOrientedBoundingBox](/images/ElementOrientedBoundingBox02.png)
 ![ElementOrientedBoundingBox](/images/ElementOrientedBoundingBox03.png)
+![ElementOrientedBoundingBox](/images/ElementOrientedBoundingBox04.png)
 
 
 > **SolidsAPI -> GetAndUniteElementSolids**  
