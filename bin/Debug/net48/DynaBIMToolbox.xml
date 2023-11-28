@@ -167,6 +167,15 @@
             </returns>
             <search> room, surface, solid, API </search>
         </member>
+        <member name="M:GeometryAPI.BooleanAPI.DoSolidsIntersect(Autodesk.Revit.DB.Solid,Autodesk.Revit.DB.Solid)">
+            <summary>
+            Checks if two Autodesk.Revit.DB.Solid objects are intersecting. If an intersection between them is found, the volume of which is larger than zero, the node returns 'True'. Otherwise it returns 'False'
+            </summary>
+            <param name="solidA"> Autodesk.Revit.DB.Solid || Revit API Solid </param>
+            <param name="solidB"> Autodesk.Revit.DB.Solid || Revit API Solid </param>
+            <returns> Boolean </returns>
+            <search> solid, intersect, doesintersect, revitapi </search>
+        </member>
         <member name="T:Inspect.ElementsData">
             <summary>
             Retrieving and working with different elements' data

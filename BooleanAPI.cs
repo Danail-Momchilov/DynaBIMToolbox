@@ -19,6 +19,7 @@ using System;
 using System.Security.Cryptography;
 using System.Linq;
 using Autodesk.Revit.DB.Architecture;
+using System.Runtime.Remoting.Metadata.W3cXsd2001;
 
 
 // namespace : interpreted as a main category in the package
@@ -561,6 +562,33 @@ namespace GeometryAPI
                     returnDict.Add("roomExceptions", null);
 
                 return returnDict;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Checks if two Autodesk.Revit.DB.Solid objects are intersecting. If an intersection between them is found, the volume of which is larger than zero, the node returns 'True'. Otherwise it returns 'False'
+        /// </summary>
+        /// <param name="solidA"> Autodesk.Revit.DB.Solid || Revit API Solid </param>
+        /// <param name="solidB"> Autodesk.Revit.DB.Solid || Revit API Solid </param>
+        /// <returns> Boolean </returns>
+        /// <search> solid, intersect, doesintersect, revitapi </search>
+        public bool DoSolidsIntersect(Autodesk.Revit.DB.Solid solidA, Autodesk.Revit.DB.Solid solidB)
+        {
+            try
+            {
+                Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(solidA, solidB, BooleanOperationsType.Intersect);
+
+                if (SolidConversions.DoBoundingBoxesIntersect(solidA.GetBoundingBox(), solidA.GetBoundingBox().Transform, solidB.GetBoundingBox(), solidB.GetBoundingBox().Transform))
+                    if (intersection != null && intersection.Volume != 0)
+                        return true;
+                    else
+                        return false;
+                else
+                    return false;
             }
             catch (Exception e)
             {
