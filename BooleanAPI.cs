@@ -57,6 +57,104 @@ namespace GeometryAPI
             }
         }
 
+        public static Autodesk.Revit.DB.Solid GetRoomSolid(Revit.Elements.Room room, double height)
+        {
+            try
+            {
+                // unwrap Dynamo rooms to get Revit rooms
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
+
+                // get room's curves from the specified room
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish;
+
+                List<Autodesk.Revit.DB.Curve> roomCurves = new List<Autodesk.Revit.DB.Curve>();
+
+                foreach (BoundarySegment segment in revitRoom.GetBoundarySegments(options)[0])
+                    roomCurves.Add(segment.GetCurve());
+
+                List<CurveLoop> crvLoopList = new List<CurveLoop> { CurveLoop.Create(roomCurves) };
+
+                return GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, height / 30.48);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static Autodesk.Revit.DB.Solid GetRoomSolidTest(Revit.Elements.Room room, double height)
+        {
+            try
+            {
+                // unwrap Dynamo rooms to get Revit rooms
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
+
+                // get room's curves from the specified room
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish;
+
+                Document roomDoc = revitRoom.Document;
+
+                SpatialElementGeometryCalculator calculator = new SpatialElementGeometryCalculator(roomDoc);
+
+                return calculator.CalculateSpatialElementGeometry(revitRoom).GetGeometry();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static Autodesk.Revit.DB.Solid GetRoomSolidTestCenter(Revit.Elements.Room room, double height)
+        {
+            try
+            {
+                // unwrap Dynamo rooms to get Revit rooms
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
+
+                // get room's curves from the specified room
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Center;
+
+                Document roomDoc = revitRoom.Document;
+
+                SpatialElementGeometryCalculator calculator = new SpatialElementGeometryCalculator(roomDoc);
+
+                return calculator.CalculateSpatialElementGeometry(revitRoom).GetGeometry();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static Autodesk.Revit.DB.Solid GetRoomSolidTransformed(Revit.Elements.Room room, double height, RevitLinkInstance revitLinkInstance)
+        {
+            try
+            {
+                // unwrap Dynamo rooms to get Revit rooms
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
+
+                // get room's curves from the specified room
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Finish;
+
+                List<Autodesk.Revit.DB.Curve> roomCurves = new List<Autodesk.Revit.DB.Curve>();
+
+                foreach (BoundarySegment segment in revitRoom.GetBoundarySegments(options)[0])
+                    roomCurves.Add(segment.GetCurve());
+
+                List<CurveLoop> crvLoopList = new List<CurveLoop> { CurveLoop.Create(roomCurves) };
+
+                return SolidConversions.ReturnTransformedSolid(GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, height / 30.48), revitLinkInstance);
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
         /// <summary>
         /// Get the Autodesk.DB.Solid for the specified wall from linked model
         /// </summary>
@@ -938,6 +1036,30 @@ namespace Inspect
                 return room.BoundingBox;
             }
             catch(Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static List<Autodesk.DesignScript.Geometry.Curve> GetRoomCurves(Revit.Elements.Room room, double height)
+        {
+            try
+            {
+                // unwrap Dynamo rooms to get Revit rooms
+                Autodesk.Revit.DB.Architecture.Room revitRoom = (Autodesk.Revit.DB.Architecture.Room)room.InternalElement;
+
+                // get room's curves from the specified room
+                SpatialElementBoundaryOptions options = new SpatialElementBoundaryOptions();
+                options.SpatialElementBoundaryLocation = SpatialElementBoundaryLocation.Center;
+
+                List<Autodesk.DesignScript.Geometry.Curve> roomCurves = new List<Autodesk.DesignScript.Geometry.Curve>();
+
+                foreach (BoundarySegment segment in revitRoom.GetBoundarySegments(options)[0])
+                    roomCurves.Add(segment.GetCurve().ToProtoType());
+
+                return roomCurves;
+            }
+            catch (Exception e)
             {
                 throw e;
             }
