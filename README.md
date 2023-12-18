@@ -56,6 +56,13 @@ Consists of 3 subcategories - BooleanAPI, SolidsAPI and SurfacesAPI
 ![RoomSurfaceIntersectionAreas](/images/RoomSurfaceIntersectionAreas01.png)
 
 
+> **BooleanAPI -> DoSolidsIntersect (v 2.0)**
+> Checks if two API solids intersect. Returns either True or False
+
+![DoSolidsIntersect](/images/DoSolidsIntersect01)
+![DoSolidsIntersect](/images/DoSolidsIntersect02)
+
+
 > **SurfacesAPI -> ReturnDynamoFaces**  
 > Similar node to the ReturnDynamoSolid. Converts Autodesk.Revit.DB.PlanarFace to Dynamo Surface
 
