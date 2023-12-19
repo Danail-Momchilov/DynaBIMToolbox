@@ -622,7 +622,7 @@ namespace GeometryAPI
                         {
                             // check if the room's bounding box collides with the one of the solid before intersecting the solids themselves
                             // should make the process less time consuming...
-                            if (SolidConversions.DoBoundingBoxesIntersect(revitRoom.get_BoundingBox(null), revitRoom.get_BoundingBox(null).Transform, solid.GetBoundingBox(), solid.GetBoundingBox().Transform ))
+                            if (SolidConversions.DoBoundingBoxesIntersect(revitRoom.get_BoundingBox(null), revitRoom.get_BoundingBox(null).Transform, solid.GetBoundingBox(), solid.GetBoundingBox().Transform))
                             {
                                 // create intersectoin
                                 Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(faceSolid, solid, BooleanOperationsType.Intersect);
@@ -687,6 +687,68 @@ namespace GeometryAPI
                         return false;
                 else
                     return false;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Gets two Revit API solids and returns their intersection solid, if found
+        /// </summary>
+        /// <param name="solidA"> Autodesk.Revit.DB.Solid || RevitAPI Solid </param>
+        /// <param name="solidB"> Autodesk.Revit.DB.Solid || RevitAPI Solid </param>
+        /// <returns>
+        /// <item>
+        /// <description> Autodesk.Revit.DB.Solid || Revit API Solid </description>
+        /// </item>
+        /// <item>
+        /// <description> Double || Numeric Volume </description>
+        /// </item>
+        /// </returns>
+        /// <search> solids, intersection, intersect solids </search>>
+        [MultiReturn(new[] { "solidIntersection", "intersectionVolume" })]
+        public static Dictionary<string, object> SolidsIntersection(Autodesk.Revit.DB.Solid solidA, Autodesk.Revit.DB.Solid solidB)
+        {
+            try
+            {
+                Dictionary<string, object> returnDict = new Dictionary<string, object>();
+
+                returnDict.Add("solidIntersection", null);
+                returnDict.Add("intersectionVolume", null);
+
+                if (SolidConversions.DoBoundingBoxesIntersect(solidA.GetBoundingBox(), solidA.GetBoundingBox().Transform, solidB.GetBoundingBox(), solidB.GetBoundingBox().Transform))
+                {
+                    Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(solidA, solidB, BooleanOperationsType.Intersect);
+
+                    if (intersection != null && intersection.Volume != 0)
+                    {
+                        returnDict.Clear();
+                        returnDict.Add("solidIntersection", intersection);
+                        returnDict.Add("intersectionVolume", intersection.Volume * 28316.846592);
+                    }
+                }
+
+                return returnDict;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+
+        }
+
+        /// <summary>
+        /// Gets a list of Autodesk.Revit.DB.Solid elements and returns a single, united Solid
+        /// </summary>
+        /// <param name="solidsList"> List<Autodesk.Revit.DB.Solid> || List of Revit Solids </param>
+        /// <returns> Autodesk.Revit.DB.Solid || Revit Solid </returns>
+        public static Autodesk.Revit.DB.Solid SolidsUnion(List<Autodesk.Revit.DB.Solid> solidsList)
+        {
+            try
+            {
+                return SolidConversions.UniteSolids(solidsList);
             }
             catch (Exception e)
             {
@@ -1179,6 +1241,63 @@ namespace Inspect
                 }
 
                 return phaseNames;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Retrieve Points' Data
+    /// </summary>
+    public class GeometryData
+    {
+        private GeometryData() { }
+
+        /// <summary>
+        /// Gets a point and returns all three of its components
+        /// </summary>
+        /// <param name="point"> Autodesk.DesignScript.Geometry.Point || Dynamo Point </param>
+        /// <returns> </returns>
+        /// <search> point, coordinates </search>
+        [MultiReturn(new[] { "X", "Y", "Z" })]
+        public static Dictionary<string, object> ReturnPointsCoordinates(Autodesk.DesignScript.Geometry.Point point)
+        {
+            try
+            {
+                Dictionary<string, object> returnDict = new Dictionary<string, object>();
+
+                returnDict.Add("X", point.X);
+                returnDict.Add("Y", point.Y);
+                returnDict.Add("Z", point.Z);
+
+                return returnDict;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        /// <summary>
+        /// Returns both the start and end point of a line
+        /// </summary>
+        /// <param name="line"> Autodesk.DesignScript.Geometry.Line || Dynamo Line </param>
+        /// <returns> </returns>
+        /// <search> return, startpoint, endpoint, start point, end point </search>>
+        [MultiReturn(new[] { "StartPoint", "EndPoint" })]
+        public static Dictionary<string, object> ReturnLineStartPointEndPoint(Autodesk.DesignScript.Geometry.Line line)
+        {
+            try
+            {
+                Dictionary<string, object> returnDict = new Dictionary<string, object>();
+
+                returnDict.Add("StartPoint", line.StartPoint);
+                returnDict.Add("EndPoint", line.EndPoint);
+
+                return returnDict;
             }
             catch (Exception e)
             {

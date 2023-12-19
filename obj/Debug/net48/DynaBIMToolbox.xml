@@ -176,6 +176,23 @@
             <returns> Boolean </returns>
             <search> solid, intersect, doesintersect, revitapi </search>
         </member>
+        <member name="M:GeometryAPI.BooleanAPI.SolidsIntersection(Autodesk.Revit.DB.Solid,Autodesk.Revit.DB.Solid)">
+            <summary>
+            Gets two Revit API solids and returns their intersection solid, if found
+            </summary>
+            <param name="solidA"> Autodesk.Revit.DB.Solid || RevitAPI Solid </param>
+            <param name="solidB"> Autodesk.Revit.DB.Solid || RevitAPI Solid </param>
+            <returns>
+            <item>
+            <description> Autodesk.Revit.DB.Solid || Revit API Solid </description>
+            </item>
+            <item>
+            <description> Double || Numeric Volume </description>
+            </item>
+            </returns>
+            <search> solids, intersection, intersect solids </search>>
+        </member>
+        <!-- Badly formed XML comment ignored for member "M:GeometryAPI.BooleanAPI.SolidsUnion(System.Collections.Generic.List{Autodesk.Revit.DB.Solid})" -->
         <member name="T:Inspect.ElementsData">
             <summary>
             Retrieving and working with different elements' data
@@ -332,6 +349,19 @@
             </summary>
             <returns> [string] | List of phase names, ordered chronologically </returns>
             <search> phases, get phases, getphases, pahses chronological, chronological </search>>
+        </member>
+        <member name="T:Inspect.GeometryData">
+            <summary>
+            Retrieve Points' Data
+            </summary>
+        </member>
+        <member name="M:Inspect.GeometryData.ReturnPointsCoordinates(Autodesk.DesignScript.Geometry.Point)">
+            <summary>
+            Gets a point and returns all three of its components
+            </summary>
+            <param name="point"> Autodesk.DesignScript.Geometry.Point || Dynamo Point </param>
+            <returns> </returns>
+            <search> point, coordinates </search>
         </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>
