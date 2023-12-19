@@ -59,8 +59,8 @@ Consists of 3 subcategories - BooleanAPI, SolidsAPI and SurfacesAPI
 > **BooleanAPI -> DoSolidsIntersect (v 2.0)**
 > Checks if two API solids intersect. Returns either True or False
 
-![DoSolidsIntersect](/images/DoSolidsIntersect01)
-![DoSolidsIntersect](/images/DoSolidsIntersect02)
+![DoSolidsIntersect](/images/DoSolidsIntersect01.png)
+![DoSolidsIntersect](/images/DoSolidsIntersect02.png)
 
 
 > **SurfacesAPI -> ReturnDynamoFaces**  
