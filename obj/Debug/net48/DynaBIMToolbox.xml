@@ -363,6 +363,14 @@
             <returns> </returns>
             <search> point, coordinates </search>
         </member>
+        <member name="M:Inspect.GeometryData.ReturnLineStartPointEndPoint(Autodesk.DesignScript.Geometry.Line)">
+            <summary>
+            Returns both the start and end point of a line
+            </summary>
+            <param name="line"> Autodesk.DesignScript.Geometry.Line || Dynamo Line </param>
+            <returns> </returns>
+            <search> return, startpoint, endpoint, start point, end point </search>>
+        </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
