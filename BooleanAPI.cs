@@ -1126,6 +1126,23 @@ namespace Inspect
                 throw e;
             }
         }
+
+        /// <summary>
+        /// Gets a FamilyInstance and returns the name of its Family
+        /// </summary>
+        /// <param name="familyInstance"> Revit.Elements.FamilyInstance || FamilyInstance in Dynamo </param>
+        /// <returns> String || The name of the Family </returns>
+        public static string FamilyInstanceFamilyName(Revit.Elements.FamilyInstance familyInstance)
+        {
+            try
+            {
+                return familyInstance.GetFamily.Name;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
     }
 
     /// <summary>
@@ -1250,7 +1267,7 @@ namespace Inspect
     }
 
     /// <summary>
-    /// Retrieve Points' Data
+    /// Retrieve Geometric Elements' Data
     /// </summary>
     public class GeometryData
     {

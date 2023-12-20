@@ -87,7 +87,7 @@ Consists of 3 subcategories - BooleanAPI, SolidsAPI and SurfacesAPI
 
 
 # Inspect Category
-Consists of 3 subcategories - DocumentData, ElementsData, , GeometryData, Lists
+Consists of 3 subcategories - DocumentData, ElementsData, GeometryData, Lists
 
 > **DocumentData -> GetPhasesInChronologicalOrder**  
 > Returns all phases of the active document, ordered chronologically. Result is return as a list of strings
@@ -146,6 +146,10 @@ Consists of 3 subcategories - DocumentData, ElementsData, , GeometryData, Lists
 
 > **ElementsData -> RoomBoundingBox**  
 > Returns the bounding box for the specified room. It will be oriented in accordance with Project North
+
+
+> **ElementsData -> FamilyInstanceFamilyName (Added in v 2.0)**
+> Gets a FamilyInstance and returns the name of its Family
 
 
 > **Lists -> ActuallyWorkingListClean**  
