@@ -307,6 +307,13 @@
             <returns> Autodesk.DesignScript.Geometry.BoundingBox | Dynamo Bounding Box </returns>
             <search> room, bounding box </search>>
         </member>
+        <member name="M:Inspect.ElementsData.FamilyInstanceFamilyName(Revit.Elements.FamilyInstance)">
+            <summary>
+            Gets a FamilyInstance and returns the name of its Family
+            </summary>
+            <param name="familyInstance"> Revit.Elements.FamilyInstance || FamilyInstance in Dynamo </param>
+            <returns> String || The name of the Family </returns>
+        </member>
         <member name="T:Inspect.Lists">
             <summary>
             Collection of nodes for list operations
@@ -352,7 +359,7 @@
         </member>
         <member name="T:Inspect.GeometryData">
             <summary>
-            Retrieve Points' Data
+            Retrieve Geometric Elements' Data
             </summary>
         </member>
         <member name="M:Inspect.GeometryData.ReturnPointsCoordinates(Autodesk.DesignScript.Geometry.Point)">

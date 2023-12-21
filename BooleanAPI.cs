@@ -57,6 +57,7 @@ namespace GeometryAPI
             }
         }
 
+        /*
         public static Autodesk.Revit.DB.Solid GetRoomSolid(Revit.Elements.Room room, double height)
         {
             try
@@ -153,7 +154,7 @@ namespace GeometryAPI
             {
                 throw e;
             }
-        }
+        }*/
 
         /// <summary>
         /// Get the Autodesk.DB.Solid for the specified wall from linked model
@@ -387,6 +388,183 @@ namespace GeometryAPI
                 throw e;
             }
         }
+        /*
+        public static IList<Autodesk.Revit.DB.GeometryObject> ReturnRevitSolid(Autodesk.DesignScript.Geometry.Solid inputSolid)
+        {
+            try
+            {
+                // convert the Dynamo solid to API mesh
+                IList<GeometryObject> solidGeomObject = inputSolid.ToRevitType();
+
+                Autodesk.Revit.DB.Mesh revitMesh;
+
+                if (solidGeomObject.Count == 1)
+                    revitMesh = (Autodesk.Revit.DB.Mesh)solidGeomObject[0];
+                else
+                    return null;
+
+                // define the shape builder object
+                TessellatedShapeBuilder builder = new TessellatedShapeBuilder();
+                builder.Target = TessellatedShapeBuilderTarget.Solid;
+                builder.OpenConnectedFaceSet(true);
+
+                // get all the mesh data
+                ElementId materialId = revitMesh.MaterialElementId;
+                int trianglesNumb = revitMesh.NumTriangles;
+
+                // create a face from each triangle and add it to the solid
+                for (int i = 0; i < trianglesNumb; i++)
+                {
+                    MeshTriangle meshTriangle = revitMesh.get_Triangle(i);
+                    List<XYZ> vertecesList = new List<XYZ> { meshTriangle.get_Vertex(0), meshTriangle.get_Vertex(1), meshTriangle.get_Vertex(2) };
+                    TessellatedFace face = new TessellatedFace(vertecesList, materialId);
+
+                    builder.AddFace(face);
+                }
+
+                builder.CloseConnectedFaceSet();
+                builder.Build();
+
+                TessellatedShapeBuilderResult result = builder.GetBuildResult();
+
+                return result.GetGeometricalObjects();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+        
+        public static IList<GeometryObject> ReturnRevitSolidTest(Autodesk.DesignScript.Geometry.Solid inputSolid)
+        {
+            try
+            {
+                // convert the Dynamo solid to API mesh
+                IList<GeometryObject> solidGeomObject = inputSolid.ToRevitType();
+
+                Autodesk.Revit.DB.Mesh revitMesh;
+
+                if (solidGeomObject.Count == 1)
+                    revitMesh = (Autodesk.Revit.DB.Mesh)solidGeomObject[0];
+                else
+                    return null;
+
+                // match triangles, based on identical normals, if any
+                IList<XYZ> normals = revitMesh.GetNormals();
+                int trianglesNumb = revitMesh.NumTriangles;
+
+                Dictionary<XYZ, List<XYZ>> pointsByNormals = new Dictionary<XYZ, List<XYZ>>();
+
+                for (int i = 0; i < trianglesNumb; i++)
+                {
+                    MeshTriangle triangle = revitMesh.get_Triangle(i);
+                    XYZ normal = normals[i];
+
+                    if (!pointsByNormals.ContainsKey(normal))
+                        pointsByNormals[normal] = new List<XYZ>();
+
+                    for  (int j = 0; j < 3; j++)
+                    {
+                        XYZ vertex = triangle.get_Vertex(j);
+                        pointsByNormals[normal].Add(vertex);
+                    }
+                }
+
+                // remove duplicating points from the list
+                foreach (var kvp in pointsByNormals)
+                {
+                    List<XYZ> uniquePoints = kvp.Value.Distinct().ToList();
+                    pointsByNormals[kvp.Key] = uniquePoints;
+                }
+
+                // define the shape builder object
+                TessellatedShapeBuilder builder = new TessellatedShapeBuilder();
+                builder.Target = TessellatedShapeBuilderTarget.Solid;
+                builder.OpenConnectedFaceSet(true);
+
+                ElementId materialId = revitMesh.MaterialElementId;
+
+                // create face from each points set and add it to the shape builder
+                foreach (XYZ normal in normals)
+                {
+                    TessellatedFace face = new TessellatedFace(pointsByNormals[normal], materialId);
+                    builder.AddFace(face);
+                }
+
+                builder.CloseConnectedFaceSet();
+                builder.Build();
+
+                TessellatedShapeBuilderResult result = builder.GetBuildResult();
+
+                return result.GetGeometricalObjects();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static ElementId ReturnSolidMeshMaterialId(Autodesk.DesignScript.Geometry.Solid inputSolid)
+        {
+            try
+            {
+                // convert the Dynamo solid to API mesh
+                IList<GeometryObject> solidGeomObject = inputSolid.ToRevitType();
+
+                Autodesk.Revit.DB.Mesh revitMesh;
+
+                if (solidGeomObject.Count == 1)
+                    revitMesh = (Autodesk.Revit.DB.Mesh)solidGeomObject[0];
+                else
+                    return null;
+
+                return revitMesh.MaterialElementId;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static IList<XYZ> ReturnSolidNormals(Autodesk.DesignScript.Geometry.Solid inputSolid)
+        {
+            try
+            {
+                // convert the Dynamo solid to API mesh
+                IList<GeometryObject> solidGeomObject = inputSolid.ToRevitType();
+
+                Autodesk.Revit.DB.Mesh revitMesh;
+
+                if (solidGeomObject.Count == 1)
+                    revitMesh = (Autodesk.Revit.DB.Mesh)solidGeomObject[0];
+                else
+                    return null;
+
+                return revitMesh.GetNormals();
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }
+
+        public static int ReturnSolidTrianglesCount(Autodesk.DesignScript.Geometry.Solid inputSolid)
+        {
+            try
+            {
+                IList<GeometryObject> solidGeomObject = inputSolid.ToRevitType();
+
+                Autodesk.Revit.DB.Mesh revitMesh;
+                
+                revitMesh = (Autodesk.Revit.DB.Mesh)solidGeomObject[0];
+
+                return revitMesh.NumTriangles;
+            }
+            catch (Exception e)
+            {
+                throw e;
+            }
+        }*/
     }
 
     // class : interpreted as a subcategory
@@ -1103,6 +1281,7 @@ namespace Inspect
             }
         }
 
+        /*
         public static List<Autodesk.DesignScript.Geometry.Curve> GetRoomCurves(Revit.Elements.Room room, double height)
         {
             try
@@ -1125,7 +1304,7 @@ namespace Inspect
             {
                 throw e;
             }
-        }
+        }*/
 
         /// <summary>
         /// Gets a FamilyInstance and returns the name of its Family
