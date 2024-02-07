@@ -323,7 +323,7 @@
             <summary>
             Checks if any of the bools in a given list is True
             </summary>
-            <param name="list">  </param>
+            <param name="list"> [object] | List of elements </param>
             <returns> bool || True or False </returns>
             <search> list, any, true </search>
         </member>
@@ -344,6 +344,31 @@
             <param name="changeWith"> object | The value to replace with. Could be any type of variable </param>
             <returns> object | Replaced value </returns>
             <search> replace with, replace if, replace, find </search>>
+        </member>
+        <member name="M:Inspect.Lists.IndexesOfMaxValue(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the indexes of the maximal value in an input list. If the value occurs only once, the final list will contain a single index
+            </summary>
+            <param name="inputList"> [object] | List of elements </param>
+            <returns> [int] | A List of integers </returns>
+            <search> indexes of, maximal value, indexesofminvalue, IndexesOfMinValue </search>
+        </member>
+        <member name="M:Inspect.Lists.IndexesOfMinValue(System.Collections.Generic.List{System.Double})">
+            <summary>
+            Returns the indexes of the minimal value in an input list. If the value occurs only once, the final list will contain a single index
+            </summary>
+            <param name="inputList"> [object] | List of elements </param>
+            <returns> [int] | A List of integers </returns>
+            <search> indexes of, minimal value, IndexesOfMaxValue, indexesofmaxvalue </search>
+        </member>
+        <member name="M:Inspect.Lists.ListCombinatorConsistent(System.Collections.Generic.List{System.Object},System.Collections.Generic.List{System.Object})">
+            <summary>
+            Combines lists by placing elements with identical indices in sublists. If lists have different length, the last sublists will only contain a single element
+            </summary>
+            <param name="listA"> [object] | List of elements </param>
+            <param name="listB"> [object] | List of elements </param>
+            <returns> [[object]] | A list of lists of combined objects </returns>>
+            <search> list, combine, combinator, consistent, ListCombinatorConsistent, listcombinatorconsistent </search>
         </member>
         <member name="T:Inspect.DocumentData">
             <summary>
@@ -377,6 +402,14 @@
             <param name="line"> Autodesk.DesignScript.Geometry.Line || Dynamo Line </param>
             <returns> </returns>
             <search> return, startpoint, endpoint, start point, end point </search>>
+        </member>
+        <member name="M:Inspect.GeometryData.IsCurveHorizontal(Autodesk.DesignScript.Geometry.Curve)">
+            <summary>
+            Checks if a curve is horizontal
+            </summary>
+            <param name="curve"> [object] | List of elements </param>
+            <returns> bool | true or false </returns>
+            <search> curve, ishorizontal, isHorizontal, IsCurveHorizontal, iscurvehorizontal </search>>
         </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>

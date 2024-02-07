@@ -1334,7 +1334,7 @@ namespace Inspect
         /// <summary>
         /// Checks if any of the bools in a given list is True
         /// </summary>
-        /// <param name="list">  </param>
+        /// <param name="list"> [object] | List of elements </param>
         /// <returns> bool || True or False </returns>
         /// <search> list, any, true </search>
         public static bool AnyTrue(List<bool> list)
@@ -1394,6 +1394,85 @@ namespace Inspect
             {
                 throw e;
             }
+        }
+
+        /// <summary>
+        /// Returns the indexes of the maximal value in an input list. If the value occurs only once, the final list will contain a single index
+        /// </summary>
+        /// <param name="inputList"> [object] | List of elements </param>
+        /// <returns> [int] | A List of integers </returns>
+        /// <search> indexes of, maximal value, indexesofminvalue, IndexesOfMinValue </search>
+        public static List<int> IndexesOfMaxValue(List<double> inputList)
+        {
+            List<int> outputList = new List<int>();
+
+            if (inputList == null || !inputList.Any())
+                outputList.Add(-1);
+            else
+            {
+                double maxValue = inputList.Max();
+
+                for (int i = 0; i < inputList.Count; i++)
+                    if (inputList[i] == maxValue)
+                        outputList.Add(i);
+            }
+
+            return outputList;
+        }
+
+        /// <summary>
+        /// Returns the indexes of the minimal value in an input list. If the value occurs only once, the final list will contain a single index
+        /// </summary>
+        /// <param name="inputList"> [object] | List of elements </param>
+        /// <returns> [int] | A List of integers </returns>
+        /// <search> indexes of, minimal value, IndexesOfMaxValue, indexesofmaxvalue </search>
+        public static List<int> IndexesOfMinValue(List<double> inputList)
+        {
+            List<int> outputList = new List<int>();
+
+            if (inputList == null || !inputList.Any())
+                outputList.Add(-1);
+            else
+            {
+                double minValue = inputList.Min();
+
+                for (int i = 0; i < inputList.Count; i++)
+                    if (inputList[i] == minValue)
+                        outputList.Add(i);
+            }
+
+            return outputList;
+        }
+
+        /// <summary>
+        /// Combines lists by placing elements with identical indices in sublists. If lists have different length, the last sublists will only contain a single element
+        /// </summary>
+        /// <param name="listA"> [object] | List of elements </param>
+        /// <param name="listB"> [object] | List of elements </param>
+        /// <returns> [[object]] | A list of lists of combined objects </returns>>
+        /// <search> list, combine, combinator, consistent, ListCombinatorConsistent, listcombinatorconsistent </search>
+        public static List<List<object>> ListCombinatorConsistent(List<object> listA, List<object> listB)
+        {
+            List<List<object>> outputList = new List<List<object>>();
+
+            int length;
+
+            if (listA.Count >= listB.Count)
+                length = listA.Count;
+            else
+                length = listB.Count;
+
+            for (int i = 0; i < length; i++)
+            {
+                List<object> tempList = new List<object>();
+                if (i < listA.Count)
+                    tempList.Add(listA[i]);
+                if (i < listB.Count)
+                    tempList.Add(listB[i]);
+                outputList.Add(tempList);
+            }
+
+            return outputList;
         }
     }
 
@@ -1499,6 +1578,20 @@ namespace Inspect
             {
                 throw e;
             }
+        }
+
+        /// <summary>
+        /// Checks if a curve is horizontal
+        /// </summary>
+        /// <param name="curve"> [object] | List of elements </param>
+        /// <returns> bool | true or false </returns>
+        /// <search> curve, ishorizontal, isHorizontal, IsCurveHorizontal, iscurvehorizontal </search>>
+        public static bool IsCurveHorizontal(Autodesk.DesignScript.Geometry.Curve curve)
+        {
+            Autodesk.DesignScript.Geometry.Point startPoint = curve.StartPoint;
+            Autodesk.DesignScript.Geometry.Point endPoint = curve.EndPoint;
+
+            return (startPoint.Z == endPoint.Z);
         }
     }
 }

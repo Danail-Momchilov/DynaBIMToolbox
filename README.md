@@ -166,13 +166,31 @@ Consists of 3 subcategories - DocumentData, ElementsData, GeometryData, Lists
 ![ReplaceWithIf](/images/ReplaceWithIf01.png)
 
 
+**Lists -> ListCombinatorConsistent (Added in v 2.1)**
+> Combines lists by placing elements with identical indices in sublists. If lists have different length, the last sublists will only contain a single element
+
+![ListCombinatorConsistent](/images/ListCombinatorConsistent.png)
+
+
+**Lists -> IndexesOfMaxValue (Added in v 2.1)**
+> Returns the indexes of the maximal value in an input list. If the value occurs only once, the final list will contain a single index
+
+
+**Lists -> IndexesOfMinValue (Added in v 2.1)**
+> Returns the indexes of the minimal value in an input list. If the value occurs only once, the final list will contain a single index
+
+
 > **GeometryData -> ReturnPointsCoordinates (Added in v 2.0)**
 > Gets a point and returns all three of its coordinates
 
 ![ReturnPointsCoordinates](/images/ReturnPointsCoordinates.png)
 
 
-> **GeometryData -> ReturnLineStartPointEndPoint (Added in a v 2.0)**
+> **GeometryData -> ReturnLineStartPointEndPoint (Added in v 2.0)**
 > Returns both the start and end point of a line
 
 ![ReturnLineStartPointEndPoint](/images/ReturnLineStartPointEndPoint.png)
+
+
+**GeometryData -> IsCurveHorizontal (Added in v 2.1)**
+> Checks if a curve is horizontal. Returns true or false

@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("DynaBIMToolbox")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+df3bbe2caf9d70d00f46f231bfff9d48932b2a46")]
 [assembly: System.Reflection.AssemblyProductAttribute("DynaBIMToolbox")]
 [assembly: System.Reflection.AssemblyTitleAttribute("DynaBIMToolbox")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
