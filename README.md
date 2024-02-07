@@ -194,3 +194,13 @@ Consists of 3 subcategories - DocumentData, ElementsData, GeometryData, Lists
 
 **GeometryData -> IsCurveHorizontal (Added in v 2.1)**
 > Checks if a curve is horizontal. Returns true or false
+
+
+# Generate Category
+Currently, consists of only one subcategory - Geometry (Added in v 2.1)
+
+
+**Geometry - VectorByCurve (Added in v 2.10**
+> Creates a vector from a curve's Start and End Point
+
+![VectorByCurve](/images/VectorByCurve.png)

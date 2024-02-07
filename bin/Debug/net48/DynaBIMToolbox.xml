@@ -411,6 +411,14 @@
             <returns> bool | true or false </returns>
             <search> curve, ishorizontal, isHorizontal, IsCurveHorizontal, iscurvehorizontal </search>>
         </member>
+        <member name="M:Generate.Geometry.VectorByCurve(Autodesk.DesignScript.Geometry.Curve)">
+            <summary>
+            Creates a vector from a curve's Start and End Point
+            </summary>
+            <param name="curve"> Autodesk.DesignScript.Geometry.Curve | Dynamo Curve </param>
+            <returns> Vector | Dynamo Vector </returns>
+            <search> vector, by, curve, vectorbycurve, VectorByCurve, bycurve, byCurve </search>
+        </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.

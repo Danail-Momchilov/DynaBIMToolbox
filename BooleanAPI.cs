@@ -1595,3 +1595,26 @@ namespace Inspect
         }
     }
 }
+
+namespace Generate
+
+{
+    public class Geometry
+    {
+        private Geometry() { }
+
+        /// <summary>
+        /// Creates a vector from a curve's Start and End Point
+        /// </summary>
+        /// <param name="curve"> Autodesk.DesignScript.Geometry.Curve | Dynamo Curve </param>
+        /// <returns> Vector | Dynamo Vector </returns>
+        /// <search> vector, by, curve, vectorbycurve, VectorByCurve, bycurve, byCurve </search>
+        public static Vector VectorByCurve(Autodesk.DesignScript.Geometry.Curve curve)
+        {
+            Autodesk.DesignScript.Geometry.Point startPoint = curve.StartPoint;
+            Autodesk.DesignScript.Geometry.Point endPoint = curve.EndPoint;
+
+            return Vector.ByTwoPoints(startPoint, endPoint);
+        }
+    }
+}
