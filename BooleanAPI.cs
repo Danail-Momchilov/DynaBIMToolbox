@@ -1618,7 +1618,12 @@ namespace Generate
             return Vector.ByTwoPoints(startPoint, endPoint);
         }
 
-
+        /// <summary>
+        /// Retrieves room's Geometry and extracts only the lowermost surface from it
+        /// </summary>
+        /// <param name="room"> Revit.Elements.Room | Dynamo Room </param>
+        /// <returns> PlanarFace | RevitAPI Face </returns>
+        /// <search> room, surface </search>>
         public static Autodesk.Revit.DB.PlanarFace RoomSurface(Revit.Elements.Room room)
         {
             Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;

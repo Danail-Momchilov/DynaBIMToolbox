@@ -419,6 +419,14 @@
             <returns> Vector | Dynamo Vector </returns>
             <search> vector, by, curve, vectorbycurve, VectorByCurve, bycurve, byCurve </search>
         </member>
+        <member name="M:Generate.Geometry.RoomSurface(Revit.Elements.Room)">
+            <summary>
+            Retrieves room's Geometry and extracts only the lowermost surface from it
+            </summary>
+            <param name="room"> Revit.Elements.Room | Dynamo Room </param>
+            <returns> PlanarFace | RevitAPI Face </returns>
+            <search> room, surface </search>>
+        </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.
