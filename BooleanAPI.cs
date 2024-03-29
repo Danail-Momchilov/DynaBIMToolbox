@@ -1623,12 +1623,29 @@ namespace Inspect
 
             return (startPoint.Z == endPoint.Z);
         }
+
+        /// <summary>
+        /// Checks if a Surface is horizontal
+        /// </summary>
+        /// <param name="surface"> Autodesk.DesignScript.Geometry.Surface | Dynamo Surface </param>
+        /// <returns> bool | true or false </returns>
+        /// <search> surface, horizontal, is, is surface, isSurface, isSurfaceHorizontal, is surface horizontal </search>>
+        public static bool IsSurfaceHorizontal(Autodesk.DesignScript.Geometry.Surface surface)
+        {
+            Autodesk.DesignScript.Geometry.Point point0 = surface.PointAtParameter(0, 0);
+            Autodesk.DesignScript.Geometry.Point point1 = surface.PointAtParameter(1, 1);
+
+            return (point0.Z == point1.Z);
+        }
     }
 }
 
 namespace Generate
 
 {
+    /// <summary>
+    /// Generate geometric elements
+    /// </summary>
     public class Geometry
     {
         private Geometry() { }

@@ -419,6 +419,19 @@
             <returns> bool | true or false </returns>
             <search> curve, ishorizontal, isHorizontal, IsCurveHorizontal, iscurvehorizontal </search>>
         </member>
+        <member name="M:Inspect.GeometryData.IsSurfaceHorizontal(Autodesk.DesignScript.Geometry.Surface)">
+            <summary>
+            Checks if a Surface is horizontal
+            </summary>
+            <param name="surface"> Autodesk.DesignScript.Geometry.Surface | Dynamo Surface </param>
+            <returns> bool | true or false </returns>
+            <search> surface, horizontal, is, is surface, isSurface, isSurfaceHorizontal, is surface horizontal </search>>
+        </member>
+        <member name="T:Generate.Geometry">
+            <summary>
+            Generate geometric elements
+            </summary>
+        </member>
         <member name="M:Generate.Geometry.VectorByCurve(Autodesk.DesignScript.Geometry.Curve)">
             <summary>
             Creates a vector from a curve's Start and End Point

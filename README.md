@@ -201,6 +201,10 @@ Consists of 3 subcategories - DocumentData, ElementsData, GeometryData, Lists
 > Checks if a curve is horizontal. Returns true or false
 
 
+**GeometryData -> IsSurfaceHorizontal (Added in v 1.05)**
+> Checks if a given Dynamo surface is horizontal
+
+
 # Generate Category
 Currently, consists of only one subcategory - Geometry (Added in v 1.03)
 
