@@ -14,6 +14,7 @@ using RevitServices.Persistence;
 using System.Xml.Linq;
 using Revit.GeometryConversion;
 using DynaBIMToolbox.Invisible;
+using DynaBIMToolbox.Invisible;
 using System.Linq.Expressions;
 using System;
 using System.Security.Cryptography;
@@ -1615,6 +1616,30 @@ namespace Generate
             Autodesk.DesignScript.Geometry.Point endPoint = curve.EndPoint;
 
             return Vector.ByTwoPoints(startPoint, endPoint);
+        }
+
+
+        public static Autodesk.Revit.DB.PlanarFace RoomSurface(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
+
+            GeometryElement geometryElement = revitRoom.ClosedShell;
+
+            List<Autodesk.Revit.DB.PlanarFace> horizontalFaces = new List<Autodesk.Revit.DB.PlanarFace>();
+
+            foreach (GeometryObject geometry in geometryElement)
+            {
+                if (geometry is Autodesk.Revit.DB.Solid solid)
+                {
+                    foreach (Autodesk.Revit.DB.PlanarFace face in solid.Faces)
+                    {
+                        if (!SurfaceConversions.isFaceVertical(face))
+                            horizontalFaces.Add(face);
+                    }
+                }
+            }
+
+            return SurfaceConversions.lowerMostFace(horizontalFaces);
         }
     }
 }

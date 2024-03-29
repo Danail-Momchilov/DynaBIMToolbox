@@ -2,7 +2,7 @@
 
 > C# nodes for Dynamo
 
-> Version 1.0.0
+> Version 1.0.4
 
 > Main objectives of this package version is performing Boolean and Solid operations directly in the API, aimed for improved performance of time - consuming tasks
 
@@ -57,20 +57,20 @@ Consists of 3 subcategories - BooleanAPI, SolidsAPI and SurfacesAPI
 ![RoomSurfaceIntersectionAreas](/images/RoomSurfaceIntersectionAreas01.png)
 
 
-> **BooleanAPI -> DoSolidsIntersect (Added in v 2.0)**
+> **BooleanAPI -> DoSolidsIntersect (Added in v 1.03)**
 > Checks if two API solids intersect. Returns either True or False
 
 ![DoSolidsIntersect](/images/DoSolidsIntersect01.png)
 ![DoSolidsIntersect](/images/DoSolidsIntersect02.png)
 
 
-> **BooleanAPI -> SolidIntersection (Added in v 2.0)**
+> **BooleanAPI -> SolidIntersection (Added in v 1.03)**
 > Gets two API Solids and returns the intersection
 
 ![SolidsIntersection](/images/SolidIntersection.png)
 
 
-> **BooleanAPI -> SolidsUnion (Added in v 2.0)**
+> **BooleanAPI -> SolidsUnion (Added in v 1.03)**
 > Gets a list of Autodesk.Revit.DB.Solid elements and returns a single, united Solid
 
 ![SolidsUnion](/images/SolidsUnion.png)
@@ -148,7 +148,7 @@ Consists of 3 subcategories - DocumentData, ElementsData, GeometryData, Lists
 > Returns the bounding box for the specified room. It will be oriented in accordance with Project North
 
 
-> **ElementsData -> FamilyInstanceFamilyName (Added in v 2.0)**
+> **ElementsData -> FamilyInstanceFamilyName (Added in v 1.03)**
 > Gets a FamilyInstance and returns the name of its Family
 
 
@@ -166,41 +166,41 @@ Consists of 3 subcategories - DocumentData, ElementsData, GeometryData, Lists
 ![ReplaceWithIf](/images/ReplaceWithIf01.png)
 
 
-**Lists -> ListCombinatorConsistent (Added in v 2.1)**
+**Lists -> ListCombinatorConsistent (Added in v 1.03)**
 > Combines lists by placing elements with identical indices in sublists. If lists have different length, the last sublists will only contain a single element
 
 ![ListCombinatorConsistent](/images/ListCombinatorConsistent.png)
 
 
-**Lists -> IndexesOfMaxValue (Added in v 2.1)**
+**Lists -> IndexesOfMaxValue (Added in v 1.03)**
 > Returns the indexes of the maximal value in an input list. If the value occurs only once, the final list will contain a single index
 
 
-**Lists -> IndexesOfMinValue (Added in v 2.1)**
+**Lists -> IndexesOfMinValue (Added in v 1.03)**
 > Returns the indexes of the minimal value in an input list. If the value occurs only once, the final list will contain a single index
 
 
-> **GeometryData -> ReturnPointsCoordinates (Added in v 2.0)**
+> **GeometryData -> ReturnPointsCoordinates (Added in v 1.03)**
 > Gets a point and returns all three of its coordinates
 
 ![ReturnPointsCoordinates](/images/ReturnPointsCoordinates.png)
 
 
-> **GeometryData -> ReturnLineStartPointEndPoint (Added in v 2.0)**
+> **GeometryData -> ReturnLineStartPointEndPoint (Added in v 1.03)**
 > Returns both the start and end point of a line
 
 ![ReturnLineStartPointEndPoint](/images/ReturnLineStartPointEndPoint.png)
 
 
-**GeometryData -> IsCurveHorizontal (Added in v 2.1)**
+**GeometryData -> IsCurveHorizontal (Added in v 1.03)**
 > Checks if a curve is horizontal. Returns true or false
 
 
 # Generate Category
-Currently, consists of only one subcategory - Geometry (Added in v 2.1)
+Currently, consists of only one subcategory - Geometry (Added in v 1.03)
 
 
-**Geometry - VectorByCurve (Added in v 2.10**
+**Geometry - VectorByCurve (Added in v 1.03)**
 > Creates a vector from a curve's Start and End Point
 
 ![VectorByCurve](/images/VectorByCurve.png)

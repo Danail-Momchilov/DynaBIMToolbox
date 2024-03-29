@@ -53,5 +53,27 @@ namespace DynaBIMToolbox.Invisible
                 throw e;
             }
         }
+
+        public static PlanarFace lowerMostFace(List<PlanarFace> faces)
+        {
+            try
+            {
+                PlanarFace lowerMostFace = faces[0];
+
+                foreach (PlanarFace face in faces)
+                {
+                    if (face.Origin.Z < lowerMostFace.Origin.Z)
+                    {
+                        lowerMostFace = face;
+                    }
+                }
+
+                return lowerMostFace;
+            }
+            catch (Exception e)
+            { 
+                throw e; 
+            }
+        }
     }
 }
