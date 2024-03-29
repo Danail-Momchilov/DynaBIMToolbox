@@ -85,6 +85,11 @@ Consists of 3 subcategories - BooleanAPI, SolidsAPI and SurfacesAPI
 
 ![WallSurfacesFromRooms](/images/WallSurfacesFromRooms01.png)
 
+**Geometry -> RoomSurface (Added in v 1.05)**
+> Retrieves room's Geometry and extracts only the lowermost surface from it. Returns it as a Revit API PlanarFace
+
+![RoomSurface](/images/RoomSurface.png)
+
 
 # Inspect Category
 Consists of 3 subcategories - DocumentData, ElementsData, GeometryData, Lists
@@ -204,8 +209,3 @@ Currently, consists of only one subcategory - Geometry (Added in v 1.03)
 > Creates a vector from a curve's Start and End Point
 
 ![VectorByCurve](/images/VectorByCurve.png)
-
-**Geometry -> RoomSurface (Added in v 1.05)**
-> Retrieves room's Geometry and extracts only the lowermost surface from it. Returns it as a Revit API PlanarFace
-
-![RoomSurface](/images/RoomSurface.png)

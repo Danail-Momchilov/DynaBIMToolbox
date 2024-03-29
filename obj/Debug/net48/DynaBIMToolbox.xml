@@ -125,6 +125,14 @@
             <returns> Dynamo Surface </returns>
             <search> PlanarFace, surface, API </search>
         </member>
+        <member name="M:GeometryAPI.SurfacesAPI.RoomSurface(Revit.Elements.Room)">
+            <summary>
+            Retrieves room's Geometry and extracts only the lowermost surface from it
+            </summary>
+            <param name="room"> Revit.Elements.Room | Dynamo Room </param>
+            <returns> PlanarFace | RevitAPI Face </returns>
+            <search> room, surface </search>>
+        </member>
         <member name="T:GeometryAPI.BooleanAPI">
             <summary>
             Boolean operations, directly in the Revit API
@@ -418,14 +426,6 @@
             <param name="curve"> Autodesk.DesignScript.Geometry.Curve | Dynamo Curve </param>
             <returns> Vector | Dynamo Vector </returns>
             <search> vector, by, curve, vectorbycurve, VectorByCurve, bycurve, byCurve </search>
-        </member>
-        <member name="M:Generate.Geometry.RoomSurface(Revit.Elements.Room)">
-            <summary>
-            Retrieves room's Geometry and extracts only the lowermost surface from it
-            </summary>
-            <param name="room"> Revit.Elements.Room | Dynamo Room </param>
-            <returns> PlanarFace | RevitAPI Face </returns>
-            <search> room, surface </search>>
         </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>

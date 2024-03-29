@@ -648,6 +648,35 @@ namespace GeometryAPI
                 throw e;
             }
         }
+
+        /// <summary>
+        /// Retrieves room's Geometry and extracts only the lowermost surface from it
+        /// </summary>
+        /// <param name="room"> Revit.Elements.Room | Dynamo Room </param>
+        /// <returns> PlanarFace | RevitAPI Face </returns>
+        /// <search> room, surface </search>>
+        public static Autodesk.Revit.DB.PlanarFace RoomSurface(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
+
+            GeometryElement geometryElement = revitRoom.ClosedShell;
+
+            List<Autodesk.Revit.DB.PlanarFace> horizontalFaces = new List<Autodesk.Revit.DB.PlanarFace>();
+
+            foreach (GeometryObject geometry in geometryElement)
+            {
+                if (geometry is Autodesk.Revit.DB.Solid solid)
+                {
+                    foreach (Autodesk.Revit.DB.PlanarFace face in solid.Faces)
+                    {
+                        if (!SurfaceConversions.isFaceVertical(face))
+                            horizontalFaces.Add(face);
+                    }
+                }
+            }
+
+            return SurfaceConversions.lowerMostFace(horizontalFaces);
+        }
     }
 
     /// <summary>
@@ -1616,35 +1645,6 @@ namespace Generate
             Autodesk.DesignScript.Geometry.Point endPoint = curve.EndPoint;
 
             return Vector.ByTwoPoints(startPoint, endPoint);
-        }
-
-        /// <summary>
-        /// Retrieves room's Geometry and extracts only the lowermost surface from it
-        /// </summary>
-        /// <param name="room"> Revit.Elements.Room | Dynamo Room </param>
-        /// <returns> PlanarFace | RevitAPI Face </returns>
-        /// <search> room, surface </search>>
-        public static Autodesk.Revit.DB.PlanarFace RoomSurface(Revit.Elements.Room room)
-        {
-            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
-
-            GeometryElement geometryElement = revitRoom.ClosedShell;
-
-            List<Autodesk.Revit.DB.PlanarFace> horizontalFaces = new List<Autodesk.Revit.DB.PlanarFace>();
-
-            foreach (GeometryObject geometry in geometryElement)
-            {
-                if (geometry is Autodesk.Revit.DB.Solid solid)
-                {
-                    foreach (Autodesk.Revit.DB.PlanarFace face in solid.Faces)
-                    {
-                        if (!SurfaceConversions.isFaceVertical(face))
-                            horizontalFaces.Add(face);
-                    }
-                }
-            }
-
-            return SurfaceConversions.lowerMostFace(horizontalFaces);
         }
     }
 }
