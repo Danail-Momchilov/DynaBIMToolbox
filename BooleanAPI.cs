@@ -285,6 +285,18 @@ namespace GeometryAPI
             }
         }
 
+        public static Autodesk.Revit.DB.Solid RevitAPIExtrusionFromPlanarFace(PlanarFace face, double height)
+        {
+            try
+            {
+                return SolidConversions.CreateSolidExtrusionFromSurface(face, height);
+            }
+            catch (Exception e) 
+            {
+                throw e;
+            }
+        }
+
         /// <summary>
         /// Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance
         /// </summary>

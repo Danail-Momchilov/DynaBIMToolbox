@@ -173,6 +173,36 @@ namespace DynaBIMToolbox.Invisible
             }
         }
 
+        public static Autodesk.Revit.DB.Solid CreateSolidExtrusionFromSurface(PlanarFace face, double height)
+        {
+            try
+            {
+                // get all edges of the face as EdgeArrayArray
+                EdgeArrayArray edgeArray = face.EdgeLoops;
+                List<CurveLoop> crvLoopList = new List<CurveLoop>();
+
+                // get only the main external EdgeArray, convert Edges to curves and add them to a CurveLoop list
+                foreach (EdgeArray edgeAr in edgeArray)
+                {
+                    List<Autodesk.Revit.DB.Curve> crvList = new List<Autodesk.Revit.DB.Curve>();
+
+                    foreach (Autodesk.Revit.DB.Edge edge in edgeAr)
+                    {
+                        crvList.Add(edge.AsCurve());
+                    }
+
+                    CurveLoop crvLoop = CurveLoop.Create(crvList);
+                    crvLoopList.Add(crvLoop);
+                }
+
+                return GeometryCreationUtilities.CreateExtrusionGeometry(crvLoopList, XYZ.BasisZ, height/30.48);
+            }
+            catch (Exception e) 
+            {
+                throw e;
+            }
+        }
+
         public static Autodesk.Revit.DB.Solid CreateSolidExtrusionFromCurve(Autodesk.DesignScript.Geometry.Curve line, double width, double height)
         {
             try
