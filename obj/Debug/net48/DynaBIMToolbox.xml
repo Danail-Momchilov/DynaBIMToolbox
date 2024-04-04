@@ -72,6 +72,15 @@
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, Dynamo </search>
         </member>
+        <member name="M:GeometryAPI.SolidsAPI.RevitAPIExtrusionFromPlanarFace(Autodesk.Revit.DB.PlanarFace,System.Double)">
+            <summary>
+            Gets a PlanarFace and creates RevitAPI Solid extrusion from it
+            </summary>
+            <param name="face"> Autodesk.Revit.DB.PlanarFace || Revit API face </param>
+            <param name="height"> Double || Height in cm </param>
+            <returns> Autodesk.Revit.DB.Solid || RevitAPI Solid </returns>
+            <search> RevitAPI, api, API, solid, Solid, RevitAPI Solid, RevitAPISolid, fromplanarface, from, planar, face, from planar face </search>
+        </member>
         <member name="M:GeometryAPI.SolidsAPI.TranslateSolidVertically(Autodesk.Revit.DB.Solid,System.Double)">
             <summary>
             Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance

@@ -21,6 +21,7 @@ using System.Security.Cryptography;
 using System.Linq;
 using Autodesk.Revit.DB.Architecture;
 using System.Runtime.Remoting.Metadata.W3cXsd2001;
+using Generate;
 
 
 // namespace : interpreted as a main category in the package
@@ -285,6 +286,13 @@ namespace GeometryAPI
             }
         }
 
+        /// <summary>
+        /// Gets a PlanarFace and creates RevitAPI Solid extrusion from it
+        /// </summary>
+        /// <param name="face"> Autodesk.Revit.DB.PlanarFace || Revit API face </param>
+        /// <param name="height"> Double || Height in cm </param>
+        /// <returns> Autodesk.Revit.DB.Solid || RevitAPI Solid </returns>
+        /// <search> RevitAPI, api, API, solid, Solid, RevitAPI Solid, RevitAPISolid, fromplanarface, from, planar, face, from planar face </search>
         public static Autodesk.Revit.DB.Solid RevitAPIExtrusionFromPlanarFace(PlanarFace face, double height)
         {
             try
@@ -688,6 +696,135 @@ namespace GeometryAPI
             }
 
             return SurfaceConversions.lowerMostFace(horizontalFaces);
+        }
+
+        public static GeometryElement RoomGeometryTest00(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
+
+             return revitRoom.ClosedShell;
+        }
+
+        public static List<EdgeArray> RoomGeometryTest01(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;            
+
+            GeometryElement geometryElement = revitRoom.ClosedShell;
+
+            List<EdgeArray> edges = new List<EdgeArray>();
+
+            foreach (GeometryObject geometry in geometryElement)
+            {
+                if (geometry is Autodesk.Revit.DB.Solid solid)
+                {
+                    edges.Add(solid.Edges);
+                }
+            }
+
+            return edges;
+        }
+
+        public static List<FaceArray> RoomGeometryTest02(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
+
+            GeometryElement geometryElement = revitRoom.ClosedShell;
+
+            List<FaceArray> faces = new List<FaceArray>();
+
+            foreach (GeometryObject geometry in geometryElement)
+            {
+                if (geometry is Autodesk.Revit.DB.Solid solid)
+                {
+                    faces.Add(solid.Faces);
+                }
+            }
+
+            return faces;
+        }
+
+        public static List<Autodesk.Revit.DB.PlanarFace> RoomGeometryTest03(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
+
+            GeometryElement geometryElement = revitRoom.ClosedShell;
+
+            List<Autodesk.Revit.DB.PlanarFace> horizontalFaces = new List<Autodesk.Revit.DB.PlanarFace>();
+
+            foreach (GeometryObject geometry in geometryElement)
+            {
+                if (geometry is Autodesk.Revit.DB.Solid solid)
+                {
+                    foreach (Autodesk.Revit.DB.PlanarFace face in solid.Faces)
+                    {
+                        if (!SurfaceConversions.isFaceVertical(face))
+                            horizontalFaces.Add(face);
+                    }
+                }
+            }
+
+            return horizontalFaces;
+        }
+
+        public static List<PlanarFace> RoomGeometryTest05(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
+
+            GeometryElement geometryElement = revitRoom.ClosedShell;
+
+            List<FaceArray> faces = new List<FaceArray>();
+
+            foreach (GeometryObject geometry in geometryElement)
+            {
+                if (geometry is Autodesk.Revit.DB.Solid solid)
+                {
+                    faces.Add(solid.Faces);
+                }
+            }
+
+            List <PlanarFace> faceList = new List<PlanarFace>();
+
+            foreach (FaceArray array in faces)
+            {
+                foreach (PlanarFace face in array)
+                    faceList.Add(face);
+            }
+
+            return faceList;
+        }
+
+        public static List<double> RoomGeometryTest06(Revit.Elements.Room room)
+        {
+            Autodesk.Revit.DB.Architecture.Room revitRoom = room.InternalElement as Autodesk.Revit.DB.Architecture.Room;
+
+            GeometryElement geometryElement = revitRoom.ClosedShell;
+
+            List<FaceArray> faces = new List<FaceArray>();
+
+            foreach (GeometryObject geometry in geometryElement)
+            {
+                if (geometry is Autodesk.Revit.DB.Solid solid)
+                {
+                    faces.Add(solid.Faces);
+                }
+            }
+
+            List<PlanarFace> faceList = new List<PlanarFace>();
+
+            foreach (FaceArray array in faces)
+            {
+                foreach (PlanarFace face in array)
+                    faceList.Add(face);
+            }
+
+            List<double> normalsListZ = new List<double>();
+
+            foreach (PlanarFace face in faceList)
+            {
+                normalsListZ.Add(face.FaceNormal.Z);
+            }
+
+            return normalsListZ;
         }
     }
 
