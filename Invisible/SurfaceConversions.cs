@@ -18,7 +18,7 @@ namespace DynaBIMToolbox.Invisible
         {
             try
             {
-                if (face.FaceNormal.Z == 1 || face.FaceNormal.Z == -1)
+                if (Math.Round(face.FaceNormal.Z, 2, MidpointRounding.AwayFromZero) == 1 || Math.Round(face.FaceNormal.Z, 2, MidpointRounding.AwayFromZero) == -1)
                     return false;
                 else
                     return true;
