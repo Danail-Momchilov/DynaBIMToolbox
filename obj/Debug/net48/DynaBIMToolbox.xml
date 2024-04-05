@@ -111,6 +111,14 @@
             <returns> Autodesk.Revit.DB.Solid || Revit API solid </returns>
             <search> solid, API, boundingbox, element oriented </search>
         </member>
+        <member name="M:GeometryAPI.SolidsAPI.ReturnSolidCentroid(Autodesk.Revit.DB.Solid)">
+            <summary>
+            Gets the centroid of a Revit API solid and returns it as a Dynamo point
+            </summary>
+            <param name="solid"> Autodesk.Revit.DB.Solid || Revit API solid </param>
+            <returns> Autodesk.Designscript.Geometry.Point || Dynamo point</returns>
+            <search> solid, centroid, RevitAPI, solidcentroid, SolidCentroid, Centroid, return centroid, returncentroid </search>>
+        </member>
         <member name="T:GeometryAPI.SurfacesAPI">
             <summary>
             Surfaces generation and handling, directly in the Revit API

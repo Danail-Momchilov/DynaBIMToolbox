@@ -409,6 +409,17 @@ namespace GeometryAPI
                 throw e;
             }
         }
+
+        /// <summary>
+        /// Gets the centroid of a Revit API solid and returns it as a Dynamo point
+        /// </summary>
+        /// <param name="solid"> Autodesk.Revit.DB.Solid || Revit API solid </param>
+        /// <returns> Autodesk.Designscript.Geometry.Point || Dynamo point</returns>
+        /// <search> solid, centroid, RevitAPI, solidcentroid, SolidCentroid, Centroid, return centroid, returncentroid </search>>
+        public static Autodesk.DesignScript.Geometry.Point ReturnSolidCentroid(Autodesk.Revit.DB.Solid solid)
+        {
+            return solid.ComputeCentroid().ToPoint();
+        }
         /*
         public static IList<Autodesk.Revit.DB.GeometryObject> ReturnRevitSolid(Autodesk.DesignScript.Geometry.Solid inputSolid)
         {
