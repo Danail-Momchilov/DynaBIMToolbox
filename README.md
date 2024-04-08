@@ -41,10 +41,22 @@ Consists of 3 subcategories - BooleanAPI, SolidsAPI and SurfacesAPI
 ![RevitApiExtrusionFromCurve](/images/RevitApiExtrusionFromCurve01.png)
 
 
+> **SolidsAPI -> RevitAPIExtrusionFromPlanarFace(Added in v 1.05)**
+> Gets a PlanarFace and creates RevitAPI Solid extrusion from it
+
+![RevitAPIExtrisionFromPlanarFace](/image/RevitAPIExtrisionFromPlanarFace.png)
+
+
 > **SolidsAPI -> TranslateSolidVertically**  
 > Translate Autodesk.revit.DB.Solid along the Z axis at the specified distance
 
 ![TranslateSolidVertically](/images/TranslateSolidVertically01.png)
+
+
+**SolidsAPI -> ReturnSolidCentroid(Added in v 1.05)**
+> Gets the centroid of a Revit API solid and returns it as a Dynamo point
+
+![ReturnSolidCentroid](/images/ReturnSolidCentroid.png)
 
 
 > **BooleanAPI -> RoomFacesSolidIntersection**  

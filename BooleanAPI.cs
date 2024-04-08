@@ -27,7 +27,6 @@ using Generate;
 // namespace : interpreted as a main category in the package
 namespace GeometryAPI
 {
-    // class : interpreted as a subcategory 
     /// <summary>
     /// Solids generation and handling, directly in the Revit API
     /// </summary>
@@ -599,7 +598,6 @@ namespace GeometryAPI
         }*/
     }
 
-    // class : interpreted as a subcategory
     /// <summary>
     /// Surfaces generation and handling, directly in the Revit API
     /// </summary>
