@@ -1692,5 +1692,30 @@ namespace Generate
 
             return Vector.ByTwoPoints(startPoint, endPoint);
         }
+
+        /// <summary>
+        /// Creates a Rectangle by minPoint and maxPoint
+        /// </summary>
+        /// <param name="minPoint"> Autodesk.DesignScript.Geometry.Point || Dynamo Point </param>
+        /// <param name="maxPoint"> Autodesk.DesignScript.Geometry.Point || Dynamo Point </param>
+        /// <returns> Rectangle | Dynamo Rectangle </returns>
+        /// <search> rectangle, by, two, min, max, minpoint, maxpoint </search>
+        public static Autodesk.DesignScript.Geometry.Rectangle RectangleByMinMaxPoint(Autodesk.DesignScript.Geometry.Point minPoint, Autodesk.DesignScript.Geometry.Point maxPoint)
+        {
+
+            List<Autodesk.DesignScript.Geometry.Point> points = new List<Autodesk.DesignScript.Geometry.Point>();
+
+            Autodesk.DesignScript.Geometry.Point d = Autodesk.DesignScript.Geometry.Point.ByCoordinates(minPoint.X, minPoint.Y, maxPoint.Z);
+            Autodesk.DesignScript.Geometry.Point b = Autodesk.DesignScript.Geometry.Point.ByCoordinates(maxPoint.X, maxPoint.Y, minPoint.Z);
+
+            points.Add(minPoint);
+            points.Add(b);
+            points.Add(maxPoint);
+            points.Add(d);
+
+            Autodesk.DesignScript.Geometry.Rectangle rectangle = Autodesk.DesignScript.Geometry.Rectangle.ByCornerPoints(points);
+
+            return rectangle;
+        }
     }
 }

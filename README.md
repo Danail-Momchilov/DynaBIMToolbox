@@ -225,3 +225,8 @@ Currently, consists of only one subcategory - Geometry (Added in v 1.03)
 > Creates a vector from a curve's Start and End Point
 
 ![VectorByCurve](/images/VectorByCurve.png)
+
+**Geometry -> RectangleByMinMaxPoint (Added in v1.06)
+> Creates a Rectangle by minPoint and maxPoint
+
+![RectangleByMinMaxPoint](/images/RectangleByMinMaxPoint.png)

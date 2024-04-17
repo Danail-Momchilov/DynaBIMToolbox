@@ -457,6 +457,15 @@
             <returns> Vector | Dynamo Vector </returns>
             <search> vector, by, curve, vectorbycurve, VectorByCurve, bycurve, byCurve </search>
         </member>
+        <member name="M:Generate.Geometry.RectangleByMinMaxPoint(Autodesk.DesignScript.Geometry.Point,Autodesk.DesignScript.Geometry.Point)">
+            <summary>
+            Creates a Rectangle by minPoint and maxPoint
+            </summary>
+            <param name="minPoint"> Autodesk.DesignScript.Geometry.Point || Dynamo Point </param>
+            <param name="maxPoint"> Autodesk.DesignScript.Geometry.Point || Dynamo Point </param>
+            <returns> Rectangle | Dynamo Rectangle </returns>
+            <search> rectangle, by, two, min, max, minpoint, maxpoint </search>
+        </member>
         <member name="T:DynaBIMToolbox.Properties.Resources">
             <summary>
               A strongly-typed resource class, for looking up localized strings, etc.

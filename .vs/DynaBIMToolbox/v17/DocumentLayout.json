@@ -1,0 +1,37 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "B:\\06. BIM AUTOMATION\\02. C#\\DYNAMO ZERO TOUCH NODES\\DynaBIMToolbox\\DynaBIMToolbox\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{63B4510D-7B5B-49C4-BBB7-70BD2710018A}|DynaBIMToolbox.csproj|b:\\06. bim automation\\02. c#\\dynamo zero touch nodes\\dynabimtoolbox\\dynabimtoolbox\\booleanapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{63B4510D-7B5B-49C4-BBB7-70BD2710018A}|DynaBIMToolbox.csproj|solutionrelative:booleanapi.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "BooleanAPI.cs",
+              "DocumentMoniker": "B:\\06. BIM AUTOMATION\\02. C#\\DYNAMO ZERO TOUCH NODES\\DynaBIMToolbox\\DynaBIMToolbox\\BooleanAPI.cs",
+              "RelativeDocumentMoniker": "BooleanAPI.cs",
+              "ToolTip": "B:\\06. BIM AUTOMATION\\02. C#\\DYNAMO ZERO TOUCH NODES\\DynaBIMToolbox\\DynaBIMToolbox\\BooleanAPI.cs",
+              "RelativeToolTip": "BooleanAPI.cs",
+              "ViewState": "AQIAAIUGAAAAAAAAAAAiwJ8GAAAVAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2024-04-15T09:21:55.061Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
