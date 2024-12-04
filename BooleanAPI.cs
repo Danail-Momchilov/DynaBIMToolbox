@@ -911,19 +911,19 @@ namespace GeometryAPI
         /// <param name="solidB"> Autodesk.Revit.DB.Solid || Revit API Solid </param>
         /// <returns> Boolean </returns>
         /// <search> solid, intersect, doesintersect, revitapi </search>
-        public static bool DoSolidsIntersect(Autodesk.Revit.DB.Solid solidA, Autodesk.Revit.DB.Solid solidB)
+        public static Autodesk.Revit.DB.Solid DoSolidsIntersect(Autodesk.Revit.DB.Solid solidA, Autodesk.Revit.DB.Solid solidB)
         {
             try
             {
                 Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(solidA, solidB, BooleanOperationsType.Intersect);
 
-                if (SolidConversions.DoBoundingBoxesIntersect(solidA.GetBoundingBox(), solidA.GetBoundingBox().Transform, solidB.GetBoundingBox(), solidB.GetBoundingBox().Transform))
-                    if (intersection != null && intersection.Volume != 0)
-                        return true;
-                    else
-                        return false;
+                return intersection;
+                /*
+                if (intersection != null && intersection.Volume != 0)
+                    return true;
                 else
                     return false;
+                */
             }
             catch (Exception e)
             {
@@ -952,9 +952,10 @@ namespace GeometryAPI
             {
                 Dictionary<string, object> returnDict = new Dictionary<string, object>();
 
-                returnDict.Add("solidIntersection", null);
-                returnDict.Add("intersectionVolume", null);
+                //returnDict.Add("solidIntersection", null);
+                //returnDict.Add("intersectionVolume", null);
 
+                /*
                 if (SolidConversions.DoBoundingBoxesIntersect(solidA.GetBoundingBox(), solidA.GetBoundingBox().Transform, solidB.GetBoundingBox(), solidB.GetBoundingBox().Transform))
                 {
                     Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(solidA, solidB, BooleanOperationsType.Intersect);
@@ -965,7 +966,13 @@ namespace GeometryAPI
                         returnDict.Add("solidIntersection", intersection);
                         returnDict.Add("intersectionVolume", intersection.Volume * 28316.846592);
                     }
-                }
+                }*/
+
+                Autodesk.Revit.DB.Solid intersection = BooleanOperationsUtils.ExecuteBooleanOperation(solidA, solidB, BooleanOperationsType.Intersect);
+
+                //returnDict.Clear();
+                returnDict.Add("solidIntersection", intersection);
+                returnDict.Add("intersectionVolume", intersection.Volume * 28316.846592);
 
                 return returnDict;
             }
